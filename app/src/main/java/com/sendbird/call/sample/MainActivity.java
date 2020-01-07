@@ -1,14 +1,20 @@
 package com.sendbird.call.sample;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sendbird.call.SendBirdCall;
@@ -16,6 +22,8 @@ import com.sendbird.call.sample.utils.LoginUtils;
 import com.sendbird.call.sample.utils.PrefUtils;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int REQUEST_OVERLAY_PERMISSION = 1;
 
     private Context mContext;
     private EditText mEditTextUserId;
@@ -33,7 +41,26 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
         setViews();
-        autoLogin();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(mContext)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
+        } else {
+            autoLogin();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_OVERLAY_PERMISSION) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(this)) {
+                autoLogin();
+            } else {
+                Log.e(BaseApplication.TAG, "[MainActivity] Overlay permission denied.");
+                finish();
+            }
+        }
     }
 
     private void initViews() {
