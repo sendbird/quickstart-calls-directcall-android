@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The `SendBirdCalls` framework enables realtime VoIP communication between app users.  The repository contains a sample application intended to demonstrate a simple implementation of this framework. This document details how to get up and running using this sample application.
+The `SendBirdCalls` framework enables realtime VoIP communication between app users.  This repository contains a sample application intended to demonstrate a simple implementation of this framework. This readme document details how to get up and running using this sample application.
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@ The `SendBirdCalls` framework enables realtime VoIP communication between app us
  1. Login or Sign-up for an account at [dashboard](https://dashboard.sendbird.com).
  2. Create or select an application on the SendBird Dashboard.
  3. Note the `Application ID` for future reference.
- 4. Contact sales to enable Calls in your application.
+ 4. [Contact sales](https://sendbird.com/contact-sales) to get the `Calls` menu enabled in the dashboard. (Self-serve coming soon.)
 
 ## Creating test users
 
@@ -21,19 +21,25 @@ The `SendBirdCalls` framework enables realtime VoIP communication between app us
  2. Create at least two new users, one that will be the `caller`, and one that will be the `callee`.
  3. Note the `User ID` of each user for future reference.
 
-## Specifying the App ID
+## Specifying the Application ID
 
-To connect this sample Android application to the SendBird application specified in the previous step, the **App ID** of the SendBird application must be specified inside the sample Android application’s source code.
-
-Replace `YOUR_APP_ID` with the `App ID` of the SendBird application specified in the previous step.
-
+To connect this sample Android application to the SendBird application specified in the previous step, the **Application ID** of the SendBird application must be specified inside the sample Android application’s source code.
+​
+Replace `YOUR_APPLICATION_ID` with the `Application ID` of the SendBird application created previously.
+​
 ```java
 public class BaseApplication extends Application {
     ...
-    private static final String APP_ID = "YOUR_APP_ID";
+    private static final String APP_ID = "YOUR_APPLICATION_ID";
     ...
 }
 ```
+
+## Build install and run
+
+ - Build and run the application. Refer to [Android Documentation](https://developer.android.com/studio/run).
+ - The application must be installed onto two separate devices. (one `caller` and one `callee`)
+ - If two test devices are not available, the application can be run on an emulator.
 
 ## Making calls
 
@@ -47,4 +53,4 @@ public class BaseApplication extends Application {
 
 ## Reference
 
-- [SendBird Calls SDK for Android](https://github.com/sendbird/sendbird-calls-android).
+- [SendBird Calls SDK for Android](https://github.com/sendbird/sendbird-calls-android)
