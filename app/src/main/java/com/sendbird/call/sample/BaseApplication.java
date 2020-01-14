@@ -15,8 +15,8 @@ public class BaseApplication extends Application {
     public static final String VERSION = "0.6.0";
     public static final String TAG = "SendBirdCall";
 
-    // Replace APP_ID with YOUR_APP_ID at dashboard(https://dashboard.sendbird.com).
-    private static final String APP_ID = "31001FCA-5BE6-4A1F-A186-4A61D8C34505";
+    // Refer to "https://github.com/sendbird/quickstart-calls-android".
+    private static final String APP_ID = YOUR_APPLICATION_ID;
 
     @Override
     public void onCreate() {
