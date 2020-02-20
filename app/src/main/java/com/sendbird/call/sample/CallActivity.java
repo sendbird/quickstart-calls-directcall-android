@@ -16,10 +16,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.sendbird.call.AudioDevice;
 import com.sendbird.call.CallOptions;
 import com.sendbird.call.DirectCall;
 import com.sendbird.call.DirectCallUser;
@@ -29,6 +31,7 @@ import com.sendbird.call.sample.utils.LoginUtils;
 import com.sendbird.call.sample.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -78,6 +81,8 @@ public class CallActivity extends AppCompatActivity {
     private TextView mTextViewAccept;
 
     private LinearLayout mLinearLayoutConnectedButtons;
+    private ToggleButton mToggleButtonSpeakerphone;
+    private ToggleButton mToggleButtonBluetooth;
     private ImageView mImageViewAudio;
     private ImageView mImageViewEnd;
     //- Views
@@ -124,6 +129,36 @@ public class CallActivity extends AppCompatActivity {
                 Log.e(BaseApplication.TAG, "[CallActivity] onRemoteAudioSettingsChanged()");
 
                 setRemoteMuteInfo(call);
+            }
+
+            @Override
+            public void onAudioDeviceChanged(DirectCall call, AudioDevice currentAudioDevice, Set<AudioDevice> availableAudioDevices) {
+                Log.e(BaseApplication.TAG, "[CallActivity] onAudioDeviceChanged(currentAudioDevice: " + currentAudioDevice + ", availableAudioDevices: " + availableAudioDevices + ")");
+
+                Utils.showToast(mContext, "" + currentAudioDevice);
+
+                if (currentAudioDevice == AudioDevice.SPEAKER_PHONE) {
+                    mToggleButtonSpeakerphone.setChecked(true);
+                    mToggleButtonBluetooth.setChecked(false);
+                } else if (currentAudioDevice == AudioDevice.BLUETOOTH) {
+                    mToggleButtonSpeakerphone.setChecked(false);
+                    mToggleButtonBluetooth.setChecked(true);
+                } else {
+                    mToggleButtonSpeakerphone.setChecked(false);
+                    mToggleButtonBluetooth.setChecked(false);
+                }
+
+                if (availableAudioDevices.contains(AudioDevice.SPEAKER_PHONE)) {
+                    mToggleButtonSpeakerphone.setEnabled(true);
+                } else if (!mToggleButtonSpeakerphone.isChecked()) {
+                    mToggleButtonSpeakerphone.setEnabled(false);
+                }
+
+                if (availableAudioDevices.contains(AudioDevice.BLUETOOTH)) {
+                    mToggleButtonBluetooth.setEnabled(true);
+                } else if (!mToggleButtonBluetooth.isChecked()) {
+                    mToggleButtonBluetooth.setEnabled(false);
+                }
             }
         });
     }
@@ -196,6 +231,8 @@ public class CallActivity extends AppCompatActivity {
         mTextViewAccept = findViewById(R.id.text_view_accept);
 
         mLinearLayoutConnectedButtons = findViewById(R.id.linear_layout_connected_buttons);
+        mToggleButtonSpeakerphone = findViewById(R.id.toggle_button_speakerphone);
+        mToggleButtonBluetooth = findViewById(R.id.toggle_button_bluetooth);
         mImageViewAudio = findViewById(R.id.image_view_audio);
         mImageViewEnd = findViewById(R.id.image_view_end);
 
@@ -227,6 +264,30 @@ public class CallActivity extends AppCompatActivity {
             }
 
             end(mDirectCall);
+        });
+
+        mToggleButtonSpeakerphone.setOnClickListener(view -> {
+            mToggleButtonSpeakerphone.toggle();
+
+            if (mToggleButtonSpeakerphone.isChecked()) {
+                if (!mDirectCall.selectAudioDevice(AudioDevice.WIRED_HEADSET)) {
+                    mDirectCall.selectAudioDevice(AudioDevice.EARPIECE);
+                }
+            } else {
+                mDirectCall.selectAudioDevice(AudioDevice.SPEAKER_PHONE);
+            }
+        });
+
+        mToggleButtonBluetooth.setOnClickListener(view -> {
+            mToggleButtonBluetooth.toggle();
+
+            if (mToggleButtonBluetooth.isChecked()) {
+                if (!mDirectCall.selectAudioDevice(AudioDevice.WIRED_HEADSET)) {
+                    mDirectCall.selectAudioDevice(AudioDevice.EARPIECE);
+                }
+            } else {
+                mDirectCall.selectAudioDevice(AudioDevice.BLUETOOTH);
+            }
         });
 
         if (mAudioEnabled) {
@@ -416,13 +477,13 @@ public class CallActivity extends AppCompatActivity {
                 setRemoteMuteInfo(call);
                 setCallDurationTimer(call);
 
-                LinearLayout.LayoutParams imageViewAudioLayoutParams = (LinearLayout.LayoutParams)mImageViewAudio.getLayoutParams();
-                imageViewAudioLayoutParams.rightMargin = Utils.convertDpToPixel(this, 62);
-                mImageViewAudio.setLayoutParams(imageViewAudioLayoutParams);
-
-                LinearLayout.LayoutParams imageViewEndLayoutParams = (LinearLayout.LayoutParams)mImageViewEnd.getLayoutParams();
-                imageViewEndLayoutParams.leftMargin = Utils.convertDpToPixel(this, 62);
-                mImageViewEnd.setLayoutParams(imageViewEndLayoutParams);
+//                LinearLayout.LayoutParams imageViewAudioLayoutParams = (LinearLayout.LayoutParams)mImageViewAudio.getLayoutParams();
+//                imageViewAudioLayoutParams.rightMargin = Utils.convertDpToPixel(this, 62);
+//                mImageViewAudio.setLayoutParams(imageViewAudioLayoutParams);
+//
+//                LinearLayout.LayoutParams imageViewEndLayoutParams = (LinearLayout.LayoutParams)mImageViewEnd.getLayoutParams();
+//                imageViewEndLayoutParams.leftMargin = Utils.convertDpToPixel(this, 62);
+//                mImageViewEnd.setLayoutParams(imageViewEndLayoutParams);
                 break;
             }
 

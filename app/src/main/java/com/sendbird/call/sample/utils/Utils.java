@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -56,5 +57,9 @@ public class Utils {
                         imageView.setImageDrawable(circularBitmapDrawable);
                     }
                 });
+    }
+
+    public static void showToast(Context context, String text) {
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
 }

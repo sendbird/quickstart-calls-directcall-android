@@ -159,6 +159,24 @@
             android:layout_marginRight="12dp"
             android:background="@drawable/ic_callkit_audio_off_white"/>
 
+        <ToggleButton
+            android:id="@+id/toggle_button_speakerphone"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:textOn="SP"
+            android:textOff="SP"/>
+
+        <ToggleButton
+            android:id="@+id/toggle_button_bluetooth"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:textOn="BT"
+            android:textOff="BT"/>
+
         <ImageView
             android:id="@+id/image_view_end"
             android:layout_width="64dp"
