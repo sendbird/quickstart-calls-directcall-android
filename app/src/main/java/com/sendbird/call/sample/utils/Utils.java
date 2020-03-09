@@ -2,7 +2,6 @@ package com.sendbird.call.sample.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.DisplayMetrics;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -16,10 +15,6 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import java.util.Locale;
 
 public class Utils {
-
-    public static int convertDpToPixel(Context context, float dp) {
-        return (int)(dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT));
-    }
 
     public static String getTimeString(long periodMs) {
         final String result;

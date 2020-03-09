@@ -1,6 +1,7 @@
 package com.sendbird.call.sample;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -21,14 +22,20 @@ import android.widget.ToggleButton;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.sendbird.call.AcceptParams;
 import com.sendbird.call.AudioDevice;
 import com.sendbird.call.CallOptions;
+import com.sendbird.call.DialParams;
 import com.sendbird.call.DirectCall;
 import com.sendbird.call.DirectCallUser;
+import com.sendbird.call.DirectCallUserRole;
 import com.sendbird.call.SendBirdCall;
+import com.sendbird.call.SendBirdVideoView;
 import com.sendbird.call.handler.DirectCallListener;
 import com.sendbird.call.sample.utils.LoginUtils;
 import com.sendbird.call.sample.utils.Utils;
+
+import org.webrtc.RendererCommon;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -39,32 +46,48 @@ public class CallActivity extends AppCompatActivity {
 
     private static final String EXTRA_INCOMING_CALL_ID = "incoming_call_id";
     private static final String EXTRA_CALLEE_ID =        "callee_id";
+    private static final String EXTRA_IS_VIDEO_CALL =    "is_video_call";
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private static final String[] MANDATORY_PERMISSIONS = {
         Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.CAMERA
     };
 
     private enum STATE {
         INCOMING_AUDIO_CALL,
+        INCOMING_VIDEO_CALL,
         ACCEPTING_AUDIO_CALL,
+        ACCEPTING_VIDEO_CALL,
         OUTGOING_AUDIO_CALL,
+        OUTGOING_VIDEO_CALL,
         CONNECTED_AUDIO_CALL,
+        CONNECTED_VIDEO_CALL,
         ENDING_AUDIO_CALL,
-        CALL_ENDED,
+        ENDING_VIDEO_CALL,
+        ENDED_CALL,
     }
 
     private Context mContext;
     private String mIncomingCallId;
     private String mCalleeId;
+    private boolean mIsVideoCall;
     private DirectCall mDirectCall;
 
     private STATE mState;
     private boolean mAudioEnabled = true;
+    private boolean mVideoEnabled = true;
     private Timer mCallDurationTimer;
     private Timer mEndingTimer;
+    private boolean mIsMyVideoStopped;
 
     //+ Views
+    private SendBirdVideoView mVideoViewFullScreen;
+    private View mViewConnectingVideoViewFullScreenFg;
+    private RelativeLayout mRelativeLayoutVideoViewSmall;
+    private SendBirdVideoView mVideoViewSmall;
+    private ImageView mImageViewMyMute;
+
     private LinearLayout mLinearLayoutInfo;
     private ImageView mImageViewProfile;
     private TextView mTextViewNicknameOrUserId;
@@ -83,16 +106,18 @@ public class CallActivity extends AppCompatActivity {
     private LinearLayout mLinearLayoutConnectedButtons;
     private ToggleButton mToggleButtonSpeakerphone;
     private ToggleButton mToggleButtonBluetooth;
+    private ImageView mImageViewVideo;
     private ImageView mImageViewAudio;
     private ImageView mImageViewEnd;
     //- Views
 
 
-    public static void startAsCaller(Context context, String calleeId) {
+    public static void startAsCaller(Context context, String calleeId, boolean isVideoCall) {
         Log.e(BaseApplication.TAG, "[CallActivity] startAsCaller()");
 
         Intent intent = new Intent(context, CallActivity.class);
         intent.putExtra(EXTRA_CALLEE_ID, calleeId);
+        intent.putExtra(EXTRA_IS_VIDEO_CALL, isVideoCall);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         context.startActivity(intent);
     }
@@ -114,14 +139,23 @@ public class CallActivity extends AppCompatActivity {
             public void onConnected(DirectCall call) {
                 Log.e(BaseApplication.TAG, "[CallActivity] onConnected()");
 
-                setState(STATE.CONNECTED_AUDIO_CALL, call);
+                if (call.isVideoCall()) {
+                    setState(STATE.CONNECTED_VIDEO_CALL, call);
+                } else {
+                    setState(STATE.CONNECTED_AUDIO_CALL, call);
+                }
             }
 
             @Override
             public void onEnded(DirectCall call) {
                 Log.e(BaseApplication.TAG, "[CallActivity] onEnded()");
 
-                setState(STATE.CALL_ENDED, call);
+                setState(STATE.ENDED_CALL, call);
+            }
+
+            @Override
+            public void onRemoteVideoSettingsChanged(DirectCall call) {
+                Log.e(BaseApplication.TAG, "[CallActivity] onRemoteVideoSettingsChanged()");
             }
 
             @Override
@@ -135,9 +169,9 @@ public class CallActivity extends AppCompatActivity {
             public void onAudioDeviceChanged(DirectCall call, AudioDevice currentAudioDevice, Set<AudioDevice> availableAudioDevices) {
                 Log.e(BaseApplication.TAG, "[CallActivity] onAudioDeviceChanged(currentAudioDevice: " + currentAudioDevice + ", availableAudioDevices: " + availableAudioDevices + ")");
 
-                Utils.showToast(mContext, "" + currentAudioDevice);
+//                Utils.showToast(mContext, "" + currentAudioDevice);
 
-                if (currentAudioDevice == AudioDevice.SPEAKER_PHONE) {
+                if (currentAudioDevice == AudioDevice.SPEAKERPHONE) {
                     mToggleButtonSpeakerphone.setChecked(true);
                     mToggleButtonBluetooth.setChecked(false);
                 } else if (currentAudioDevice == AudioDevice.BLUETOOTH) {
@@ -148,7 +182,7 @@ public class CallActivity extends AppCompatActivity {
                     mToggleButtonBluetooth.setChecked(false);
                 }
 
-                if (availableAudioDevices.contains(AudioDevice.SPEAKER_PHONE)) {
+                if (availableAudioDevices.contains(AudioDevice.SPEAKERPHONE)) {
                     mToggleButtonSpeakerphone.setEnabled(true);
                 } else if (!mToggleButtonSpeakerphone.isChecked()) {
                     mToggleButtonSpeakerphone.setEnabled(false);
@@ -176,17 +210,20 @@ public class CallActivity extends AppCompatActivity {
         setContentView(R.layout.activity_call);
 
         mContext = this;
-        mIncomingCallId = getIntent().getStringExtra(EXTRA_INCOMING_CALL_ID);
-        if (mIncomingCallId != null) {
-            mDirectCall = SendBirdCall.getCall(mIncomingCallId);
-            mCalleeId = mDirectCall.getCallee().getUserId();
-
-            setListener(mDirectCall);
-        } else {
-            mCalleeId = getIntent().getStringExtra(EXTRA_CALLEE_ID);
-        }
 
         initViews();
+
+        mIncomingCallId = getIntent().getStringExtra(EXTRA_INCOMING_CALL_ID);
+        if (mIncomingCallId != null) {  // as callee
+            mDirectCall = SendBirdCall.getCall(mIncomingCallId);
+            mCalleeId = mDirectCall.getCallee().getUserId();
+            mIsVideoCall = mDirectCall.isVideoCall();
+
+            setListener(mDirectCall);
+        } else {    // as caller
+            mCalleeId = getIntent().getStringExtra(EXTRA_CALLEE_ID);
+            mIsVideoCall = getIntent().getBooleanExtra(EXTRA_IS_VIDEO_CALL, false);
+        }
 
         if (setInitialState()) {
             checkAuthenticate();
@@ -215,6 +252,14 @@ public class CallActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        Log.e(BaseApplication.TAG, "[CallActivity] initViews()");
+
+        mVideoViewFullScreen = findViewById(R.id.video_view_fullscreen);
+        mViewConnectingVideoViewFullScreenFg = findViewById(R.id.view_connecting_video_view_fullscreen_fg);
+        mRelativeLayoutVideoViewSmall = findViewById(R.id.relative_layout_video_view_small);
+        mVideoViewSmall = findViewById(R.id.video_view_small);
+        mImageViewMyMute = findViewById(R.id.image_view_my_mute);
+
         mLinearLayoutInfo = findViewById(R.id.linear_layout_info);
         mImageViewProfile = findViewById(R.id.image_view_profile);
         mTextViewNicknameOrUserId = findViewById(R.id.text_view_nickname_or_user_id);
@@ -234,6 +279,7 @@ public class CallActivity extends AppCompatActivity {
         mToggleButtonSpeakerphone = findViewById(R.id.toggle_button_speakerphone);
         mToggleButtonBluetooth = findViewById(R.id.toggle_button_bluetooth);
         mImageViewAudio = findViewById(R.id.image_view_audio);
+        mImageViewVideo = findViewById(R.id.image_view_video);
         mImageViewEnd = findViewById(R.id.image_view_end);
 
         mImageViewAccept.setOnClickListener(view -> {
@@ -242,17 +288,21 @@ public class CallActivity extends AppCompatActivity {
                 return;
             }
 
-            if (mState == STATE.ENDING_AUDIO_CALL) {
+            if (mState == STATE.ENDING_AUDIO_CALL || mState == STATE.ENDING_VIDEO_CALL) {
                 Log.e(BaseApplication.TAG, "[CallActivity] mImageViewAccept clicked => Already ending call.");
                 return;
             }
 
-            if (mState == STATE.ACCEPTING_AUDIO_CALL) {
+            if (mState == STATE.ACCEPTING_AUDIO_CALL || mState == STATE.ACCEPTING_VIDEO_CALL) {
                 Log.e(BaseApplication.TAG, "[CallActivity] mImageViewAccept clicked => Already accepting call.");
                 return;
             }
 
-            setState(STATE.ACCEPTING_AUDIO_CALL, mDirectCall);
+            if (mIsVideoCall) {
+                setState(STATE.ACCEPTING_VIDEO_CALL, mDirectCall);
+            } else {
+                setState(STATE.ACCEPTING_AUDIO_CALL, mDirectCall);
+            }
 
             startCall(true);
         });
@@ -274,7 +324,7 @@ public class CallActivity extends AppCompatActivity {
                     mDirectCall.selectAudioDevice(AudioDevice.EARPIECE);
                 }
             } else {
-                mDirectCall.selectAudioDevice(AudioDevice.SPEAKER_PHONE);
+                mDirectCall.selectAudioDevice(AudioDevice.SPEAKERPHONE);
             }
         });
 
@@ -290,10 +340,33 @@ public class CallActivity extends AppCompatActivity {
             }
         });
 
+        if (mVideoEnabled) {
+            mImageViewVideo.setBackgroundResource(R.drawable.ic_callkit_video_off_white);
+        } else {
+            mImageViewVideo.setBackgroundResource(R.drawable.ic_callkit_video_off_black);
+        }
+        mImageViewVideo.setOnClickListener(view -> {
+            if (mDirectCall != null) {
+                if (mVideoEnabled) {
+                    Log.e(BaseApplication.TAG, "[CallActivity] stopVideo()");
+                    mDirectCall.stopVideo();
+                    mVideoEnabled = false;
+                    mImageViewVideo.setBackgroundResource(R.drawable.ic_callkit_video_off_black);
+                } else {
+                    Log.e(BaseApplication.TAG, "[CallActivity] startVideo()");
+                    mDirectCall.startVideo();
+                    mVideoEnabled = true;
+                    mImageViewVideo.setBackgroundResource(R.drawable.ic_callkit_video_off_white);
+                }
+            }
+        });
+
         if (mAudioEnabled) {
             mImageViewAudio.setBackgroundResource(R.drawable.ic_callkit_audio_off_white);
+            mImageViewMyMute.setVisibility(View.GONE);
         } else {
             mImageViewAudio.setBackgroundResource(R.drawable.ic_callkit_audio_off_black);
+            mImageViewMyMute.setVisibility(View.VISIBLE);
         }
         mImageViewAudio.setOnClickListener(view -> {
             if (mDirectCall != null) {
@@ -302,11 +375,13 @@ public class CallActivity extends AppCompatActivity {
                     mDirectCall.muteMicrophone();
                     mAudioEnabled = false;
                     mImageViewAudio.setBackgroundResource(R.drawable.ic_callkit_audio_off_black);
+                    mImageViewMyMute.setVisibility(View.VISIBLE);
                 } else {
                     Log.e(BaseApplication.TAG, "[CallActivity] unmute()");
                     mDirectCall.unmuteMicrophone();
                     mAudioEnabled = true;
                     mImageViewAudio.setBackgroundResource(R.drawable.ic_callkit_audio_off_white);
+                    mImageViewMyMute.setVisibility(View.GONE);
                 }
             }
         });
@@ -324,13 +399,21 @@ public class CallActivity extends AppCompatActivity {
 
             if (mDirectCall.isEnded()) {
                 Log.e(BaseApplication.TAG, "[CallActivity] setInitialState() => (mDirectCall.isEnded() == true)");
-                setState(STATE.CALL_ENDED, mDirectCall);
+                setState(STATE.ENDED_CALL, mDirectCall);
                 return false;
             }
 
-            setState(STATE.INCOMING_AUDIO_CALL, mDirectCall);
+            if (mIsVideoCall) {
+                setState(STATE.INCOMING_VIDEO_CALL, mDirectCall);
+            } else {
+                setState(STATE.INCOMING_AUDIO_CALL, mDirectCall);
+            }
         } else {
-            setState(STATE.OUTGOING_AUDIO_CALL, mDirectCall);
+            if (mIsVideoCall) {
+                setState(STATE.OUTGOING_VIDEO_CALL, mDirectCall);
+            } else {
+                setState(STATE.OUTGOING_AUDIO_CALL, mDirectCall);
+            }
         }
         return true;
     }
@@ -387,7 +470,7 @@ public class CallActivity extends AppCompatActivity {
     }
 
     private void ready() {
-        if (mState == STATE.OUTGOING_AUDIO_CALL) {
+        if (mState == STATE.OUTGOING_AUDIO_CALL || mState == STATE.OUTGOING_VIDEO_CALL) {
             startCall(false);
         }
     }
@@ -396,12 +479,32 @@ public class CallActivity extends AppCompatActivity {
         CallOptions callOptions = new CallOptions();
         callOptions.setAudioEnabled(mAudioEnabled);
 
+        if (mIsVideoCall) {
+            mVideoViewFullScreen.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
+            mVideoViewFullScreen.setZOrderMediaOverlay(false);
+            mVideoViewFullScreen.setEnableHardwareScaler(true);
+
+            mVideoViewSmall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
+            mVideoViewSmall.setZOrderMediaOverlay(true);
+            mVideoViewSmall.setEnableHardwareScaler(true);
+
+            callOptions.setVideoEnabled(mVideoEnabled).setAudioEnabled(mAudioEnabled);
+
+            if (amICallee) {
+                callOptions.setLocalVideoView(mVideoViewSmall).setRemoteVideoView(mVideoViewFullScreen);
+            } else {
+                callOptions.setLocalVideoView(mVideoViewFullScreen).setRemoteVideoView(mVideoViewSmall);
+            }
+        } else {
+            callOptions.setAudioEnabled(mAudioEnabled);
+        }
+
         if (amICallee) {
             Log.e(BaseApplication.TAG, "[CallActivity] accept()");
-            mDirectCall.accept(callOptions);
+            mDirectCall.accept(new AcceptParams().setCallOptions(callOptions));
         } else {
             Log.e(BaseApplication.TAG, "[CallActivity] dial()");
-            mDirectCall = SendBirdCall.dial(mCalleeId, false, callOptions, (directCall, e) -> {
+            mDirectCall = SendBirdCall.dial(new DialParams(mCalleeId).setVideoCall(mIsVideoCall).setCallOptions(callOptions), (call, e) -> {
                 if (e != null) {
                     Log.e(BaseApplication.TAG, "[CallActivity] dial() => e: " + e.getMessage());
                     finishWithEnding(e.getMessage());
@@ -417,6 +520,7 @@ public class CallActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @TargetApi(18)
     private void setState(STATE state, DirectCall call) {
         if (isFinishing()) {
@@ -427,7 +531,8 @@ public class CallActivity extends AppCompatActivity {
         mState = state;
 
         if (state == STATE.INCOMING_AUDIO_CALL || state == STATE.OUTGOING_AUDIO_CALL || state == STATE.CONNECTED_AUDIO_CALL
-                || (state == STATE.CALL_ENDED && call != null && !call.isVideoCall())) {
+                || (state == STATE.ENDED_CALL && call != null && !call.isVideoCall())
+                || state == STATE.OUTGOING_VIDEO_CALL) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_USER);
@@ -435,12 +540,16 @@ public class CallActivity extends AppCompatActivity {
 
         switch (mState) {
             case INCOMING_AUDIO_CALL: {
+                mVideoViewFullScreen.setVisibility(View.GONE);
+                mViewConnectingVideoViewFullScreenFg.setVisibility(View.GONE);
+                mRelativeLayoutVideoViewSmall.setVisibility(View.GONE);
+
                 mLinearLayoutInfo.setVisibility(View.VISIBLE);
                 mLinearLayoutRemoteMute.setVisibility(View.GONE);
                 mRelativeLayoutConnectingButtons.setVisibility(View.VISIBLE);
                 mLinearLayoutConnectedButtons.setVisibility(View.GONE);
 
-                setInfo(call, getString(R.string.sendbirdcall_receiving_voice_call));
+                setInfo(call, getString(R.string.sendbirdcall_receiving_audio_call));
 
                 mTextViewDeclineOrCancel.setText(getString(R.string.sendbirdcall_decline));
                 mLinearLayoutAccept.setVisibility(View.VISIBLE);
@@ -449,18 +558,63 @@ public class CallActivity extends AppCompatActivity {
                 break;
             }
 
-            case ACCEPTING_AUDIO_CALL: {
-                setInfo(call, getString(R.string.sendbirdcall_accepting_voice_call));
-                break;
-            }
+            case INCOMING_VIDEO_CALL: {
+                mVideoViewFullScreen.setVisibility(View.GONE);
+                mViewConnectingVideoViewFullScreenFg.setVisibility(View.GONE);
+                mRelativeLayoutVideoViewSmall.setVisibility(View.GONE);
 
-            case OUTGOING_AUDIO_CALL: {
                 mLinearLayoutInfo.setVisibility(View.VISIBLE);
                 mLinearLayoutRemoteMute.setVisibility(View.GONE);
                 mRelativeLayoutConnectingButtons.setVisibility(View.VISIBLE);
                 mLinearLayoutConnectedButtons.setVisibility(View.GONE);
 
-                setInfo(call, getString(R.string.sendbirdcall_requesting_voice_call));
+                setInfo(call, getString(R.string.sendbirdcall_receiving_video_call));
+
+                mTextViewDeclineOrCancel.setText(getString(R.string.sendbirdcall_decline));
+                mLinearLayoutAccept.setVisibility(View.VISIBLE);
+                mImageViewAccept.setBackgroundResource(R.drawable.ic_callkit_video);
+                mTextViewAccept.setText(getString(R.string.sendbirdcall_accept));
+                break;
+            }
+
+            case ACCEPTING_AUDIO_CALL: {
+                setInfo(call, getString(R.string.sendbirdcall_accepting_audio_call));
+                break;
+            }
+
+            case ACCEPTING_VIDEO_CALL: {
+                setInfo(call, getString(R.string.sendbirdcall_accepting_video_call));
+                break;
+            }
+
+            case OUTGOING_AUDIO_CALL: {
+                mVideoViewFullScreen.setVisibility(View.GONE);
+                mViewConnectingVideoViewFullScreenFg.setVisibility(View.GONE);
+                mRelativeLayoutVideoViewSmall.setVisibility(View.GONE);
+
+                mLinearLayoutInfo.setVisibility(View.VISIBLE);
+                mLinearLayoutRemoteMute.setVisibility(View.GONE);
+                mRelativeLayoutConnectingButtons.setVisibility(View.VISIBLE);
+                mLinearLayoutConnectedButtons.setVisibility(View.GONE);
+
+                setInfo(call, getString(R.string.sendbirdcall_requesting_audio_call));
+
+                mTextViewDeclineOrCancel.setText(getString(R.string.sendbirdcall_cancel));
+                mLinearLayoutAccept.setVisibility(View.GONE);
+                break;
+            }
+
+            case OUTGOING_VIDEO_CALL: {
+                mVideoViewFullScreen.setVisibility(View.VISIBLE);
+                mViewConnectingVideoViewFullScreenFg.setVisibility(View.VISIBLE);
+                mRelativeLayoutVideoViewSmall.setVisibility(View.GONE);
+
+                mLinearLayoutInfo.setVisibility(View.VISIBLE);
+                mLinearLayoutRemoteMute.setVisibility(View.GONE);
+                mRelativeLayoutConnectingButtons.setVisibility(View.VISIBLE);
+                mLinearLayoutConnectedButtons.setVisibility(View.GONE);
+
+                setInfo(call, getString(R.string.sendbirdcall_requesting_video_call));
 
                 mTextViewDeclineOrCancel.setText(getString(R.string.sendbirdcall_cancel));
                 mLinearLayoutAccept.setVisibility(View.GONE);
@@ -468,32 +622,61 @@ public class CallActivity extends AppCompatActivity {
             }
 
             case CONNECTED_AUDIO_CALL: {
+                mVideoViewFullScreen.setVisibility(View.GONE);
+                mViewConnectingVideoViewFullScreenFg.setVisibility(View.GONE);
+                mRelativeLayoutVideoViewSmall.setVisibility(View.GONE);
+
                 mLinearLayoutInfo.setVisibility(View.VISIBLE);
                 mLinearLayoutRemoteMute.setVisibility(View.VISIBLE);
                 mRelativeLayoutConnectingButtons.setVisibility(View.GONE);
                 mLinearLayoutConnectedButtons.setVisibility(View.VISIBLE);
 
+                mImageViewVideo.setVisibility(View.GONE);
+
                 setInfo(call, "");
                 setRemoteMuteInfo(call);
                 setCallDurationTimer(call);
+                break;
+            }
 
-//                LinearLayout.LayoutParams imageViewAudioLayoutParams = (LinearLayout.LayoutParams)mImageViewAudio.getLayoutParams();
-//                imageViewAudioLayoutParams.rightMargin = Utils.convertDpToPixel(this, 62);
-//                mImageViewAudio.setLayoutParams(imageViewAudioLayoutParams);
-//
-//                LinearLayout.LayoutParams imageViewEndLayoutParams = (LinearLayout.LayoutParams)mImageViewEnd.getLayoutParams();
-//                imageViewEndLayoutParams.leftMargin = Utils.convertDpToPixel(this, 62);
-//                mImageViewEnd.setLayoutParams(imageViewEndLayoutParams);
+            case CONNECTED_VIDEO_CALL: {
+                mVideoViewFullScreen.setVisibility(View.VISIBLE);
+                mViewConnectingVideoViewFullScreenFg.setVisibility(View.GONE);
+                mRelativeLayoutVideoViewSmall.setVisibility(View.VISIBLE);
+
+                mLinearLayoutInfo.setVisibility(View.GONE);
+                mLinearLayoutRemoteMute.setVisibility(View.VISIBLE);
+                mRelativeLayoutConnectingButtons.setVisibility(View.GONE);
+                mLinearLayoutConnectedButtons.setVisibility(View.VISIBLE);
+
+                mImageViewVideo.setVisibility(View.VISIBLE);
+
+                setRemoteMuteInfo(call);
+
+                if (call != null && call.getMyRole() == DirectCallUserRole.CALLER) {
+                    call.setRemoteVideoView(mVideoViewFullScreen);
+                    call.setLocalVideoView(mVideoViewSmall);
+                }
                 break;
             }
 
             case ENDING_AUDIO_CALL: {
                 cancelCallDurationTimer();
-                setInfo(call, getString(R.string.sendbirdcall_ending_voice_call));
+                setInfo(call, getString(R.string.sendbirdcall_ending_audio_call));
                 break;
             }
 
-            case CALL_ENDED: {
+            case ENDING_VIDEO_CALL: {
+                cancelCallDurationTimer();
+                setInfo(call, getString(R.string.sendbirdcall_ending_video_call));
+                break;
+            }
+
+            case ENDED_CALL: {
+                mVideoViewFullScreen.setVisibility(View.GONE);
+                mViewConnectingVideoViewFullScreenFg.setVisibility(View.GONE);
+                mRelativeLayoutVideoViewSmall.setVisibility(View.GONE);
+
                 mLinearLayoutInfo.setVisibility(View.VISIBLE);
                 mLinearLayoutRemoteMute.setVisibility(View.GONE);
                 mRelativeLayoutConnectingButtons.setVisibility(View.GONE);
@@ -606,12 +789,22 @@ public class CallActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.e(BaseApplication.TAG, "[CallActivity] onResume()");
+
+        if (mDirectCall != null && mIsMyVideoStopped) {
+            mIsMyVideoStopped = false;
+            mDirectCall.startVideo();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.e(BaseApplication.TAG, "[CallActivity] onPause()");
+
+        if (mDirectCall != null && mDirectCall.isLocalVideoEnabled()) {
+            mDirectCall.stopVideo();
+            mIsMyVideoStopped = true;
+        }
     }
 
     @Override
@@ -635,7 +828,12 @@ public class CallActivity extends AppCompatActivity {
                 return;
             }
 
-            setState(STATE.ENDING_AUDIO_CALL, call);
+            if (call.isVideoCall()) {
+                setState(STATE.ENDING_VIDEO_CALL, call);
+            } else {
+                setState(STATE.ENDING_AUDIO_CALL, call);
+            }
+
             call.end();
         }
     }

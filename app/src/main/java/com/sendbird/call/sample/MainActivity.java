@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout mLinearLayoutCall;
     private EditText mEditTextCalleeId;
     private Button mButtonAudioCall;
+    private Button mButtonVideoCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         mLinearLayoutCall = findViewById(R.id.linear_layout_call);
         mEditTextCalleeId = findViewById(R.id.edit_text_callee_id);
         mButtonAudioCall = findViewById(R.id.button_audio_call);
+        mButtonVideoCall = findViewById(R.id.button_video_call);
 
         ((TextView) findViewById(R.id.text_view_sdk_version)).setText("[SendBird Calls] Sample " + BaseApplication.VERSION + " / SDK " + SendBirdCall.getSdkVersion());
     }
@@ -113,7 +115,16 @@ public class MainActivity extends AppCompatActivity {
         mButtonAudioCall.setOnClickListener(view -> {
             String calleeId = mEditTextCalleeId.getText().toString();
             if (!TextUtils.isEmpty(calleeId)) {
-                CallActivity.startAsCaller(mContext, calleeId);
+                CallActivity.startAsCaller(mContext, calleeId, false);
+
+                PrefUtils.setCalleeId(mContext, calleeId);
+            }
+        });
+
+        mButtonVideoCall.setOnClickListener(view -> {
+            String calleeId = mEditTextCalleeId.getText().toString();
+            if (!TextUtils.isEmpty(calleeId)) {
+                CallActivity.startAsCaller(mContext, calleeId, true);
 
                 PrefUtils.setCalleeId(mContext, calleeId);
             }

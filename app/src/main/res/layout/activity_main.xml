@@ -87,6 +87,16 @@
             android:text="Audio Call"
             android:textSize="12dp"/>
 
+        <Button
+            android:id="@+id/button_video_call"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0"
+            android:layout_marginLeft="16dp"
+            android:text="Video Call"
+            android:textSize="12dp"/>
+
     </LinearLayout>
 
 </LinearLayout>

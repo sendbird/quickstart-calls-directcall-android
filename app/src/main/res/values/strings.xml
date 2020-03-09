@@ -4,7 +4,7 @@
     <string name="sendbirdcall_decline">Decline</string>
     <string name="sendbirdcall_cancel">Cancel</string>
 
-    <string name="sendbirdcall_end_result_no_answer">No Answer</string>
+    <string name="sendbirdcall_end_result_no_answer">No answer</string>
     <string name="sendbirdcall_end_result_canceled">Canceled</string>
     <string name="sendbirdcall_end_result_declined">Declined</string>
     <string name="sendbirdcall_end_result_completed">Ended</string>
@@ -16,8 +16,12 @@
     <string name="sendbirdcall_end_result_other_device_accepted">Other device accepted</string>
 
     <string name="sendbirdcall_muted_this_call">%s muted this call</string>
-    <string name="sendbirdcall_receiving_voice_call">Receiving voice call&#8230;</string>
-    <string name="sendbirdcall_accepting_voice_call">Accepting voice call&#8230;</string>
-    <string name="sendbirdcall_ending_voice_call">Ending voice call&#8230;</string>
-    <string name="sendbirdcall_requesting_voice_call">Requesting voice call&#8230;</string>
+    <string name="sendbirdcall_receiving_audio_call">Receiving audio call&#8230;</string>
+    <string name="sendbirdcall_receiving_video_call">Receiving video call&#8230;</string>
+    <string name="sendbirdcall_accepting_audio_call">Accepting audio call&#8230;</string>
+    <string name="sendbirdcall_accepting_video_call">Accepting video call&#8230;</string>
+    <string name="sendbirdcall_requesting_audio_call">Requesting audio call&#8230;</string>
+    <string name="sendbirdcall_requesting_video_call">Requesting video call&#8230;</string>
+    <string name="sendbirdcall_ending_audio_call">Ending audio call&#8230;</string>
+    <string name="sendbirdcall_ending_video_call">Ending video call&#8230;</string>
 </resources>

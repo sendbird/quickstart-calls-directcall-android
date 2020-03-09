@@ -4,6 +4,45 @@
     android:layout_height="match_parent"
     android:background="#35385e">
 
+    <com.sendbird.call.SendBirdVideoView
+        android:id="@+id/video_view_fullscreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <View
+        android:id="@+id/view_connecting_video_view_fullscreen_fg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/sendbirdcall_connecting_video_view_fullscreen_fg"/>
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_video_view_small"
+        android:layout_width="112dp"
+        android:layout_height="180dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="12dp">
+
+        <com.sendbird.call.SendBirdVideoView
+            android:id="@+id/video_view_small"
+            android:layout_width="112dp"
+            android:layout_height="180dp"
+            android:background="@drawable/sendbirdcall_frame"/>
+
+        <ImageView
+            android:id="@+id/image_view_my_mute"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="6dp"
+            android:background="@drawable/ic_callkit_mute_small_white"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/linear_layout_info"
         android:layout_width="match_parent"
@@ -152,19 +191,27 @@
         android:background="@drawable/sendbirdcall_connected_buttons_bg">
 
         <ImageView
+            android:id="@+id/image_view_video"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/ic_callkit_video_off_white"/>
+
+        <ImageView
             android:id="@+id/image_view_audio"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
             android:background="@drawable/ic_callkit_audio_off_white"/>
 
         <ToggleButton
             android:id="@+id/toggle_button_speakerphone"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
             android:textOn="SP"
             android:textOff="SP"/>
 
@@ -172,8 +219,8 @@
             android:id="@+id/toggle_button_bluetooth"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
             android:textOn="BT"
             android:textOff="BT"/>
 
@@ -181,8 +228,8 @@
             android:id="@+id/image_view_end"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
             android:background="@drawable/ic_callkit_end"/>
 
     </LinearLayout>
