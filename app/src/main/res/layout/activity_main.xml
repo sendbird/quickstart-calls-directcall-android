@@ -1,102 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#ffffff"
-    tools:context=".MainActivity">
+    tools:context="com.sendbird.calls.quickstart.main.MainActivity">
 
-    <TextView
-        android:id="@+id/text_view_sdk_version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="16dp"
-        android:text="version"
-        android:textSize="12dp"
-        android:textColor="#aaaaaa"/>
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#ffffff"
+        android:elevation="3dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextAppearance="@style/MyToolbar">
+        
+        <LinearLayout
+            android:id="@+id/linear_layout_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp">
+            
+            <ImageView
+                android:id="@+id/image_view_profile"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:background="@drawable/icon_avatar"
+                android:layout_marginRight="8dp" />
 
-    <LinearLayout
+            <TextView
+                android:id="@+id/text_view_user_id"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#e1000000"
+                android:letterSpacing="-0.01"
+                android:lineSpacingExtra="4sp" />
+
+        </LinearLayout>
+        
+    </androidx.appcompat.widget.Toolbar>
+
+    <com.sendbird.calls.quickstart.main.ViewPagerWithSwipeOption
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#1e000000" />
+
+    <com.google.android.material.tabs.TabLayout
+        style="@style/Widget.Design.TabLayout"
+        android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true">
-
-        <EditText
-            android:id="@+id/edit_text_user_id"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:imeOptions="actionDone"
-            android:singleLine="true"
-            android:hint="User ID"
-            android:textSize="14dp"/>
-
-        <Button
-            android:id="@+id/button_login"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0"
-            android:layout_marginLeft="16dp"
-            android:text="Login"
-            android:textSize="12dp"/>
-
-        <Button
-            android:id="@+id/button_logout"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0"
-            android:layout_marginLeft="16dp"
-            android:text="Logout"
-            android:textSize="12dp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linear_layout_call"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
-
-        <EditText
-            android:id="@+id/edit_text_callee_id"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:imeOptions="actionDone"
-            android:singleLine="true"
-            android:hint="Callee ID"
-            android:textSize="14dp"/>
-
-        <Button
-            android:id="@+id/button_audio_call"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0"
-            android:layout_marginLeft="16dp"
-            android:text="Audio Call"
-            android:textSize="12dp"/>
-
-        <Button
-            android:id="@+id/button_video_call"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0"
-            android:layout_marginLeft="16dp"
-            android:text="Video Call"
-            android:textSize="12dp"/>
-
-    </LinearLayout>
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        app:tabIndicator="@null" />
 
 </LinearLayout>

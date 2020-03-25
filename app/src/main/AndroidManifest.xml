@@ -1,29 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sendbird.call.sample">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.sendbird.calls.quickstart">
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- https://developer.android.com/guide/components/activities/background-starts -->
+    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" /> <!-- [QRCode] -->
 
     <application
         android:name=".BaseApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/sendbirdcall_app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/calls_app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme"
+        android:hardwareAccelerated="true"> <!-- [QRCode] -->
+
+        <activity android:name=".SplashActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <activity android:name=".AuthenticateActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <activity android:name=".SignInManuallyActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <activity android:name=".main.MainActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <activity android:name=".main.ApplicationInformationActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
         <activity
-            android:name=".CallActivity"
+            android:name=".call.VideoCallActivity"
             android:configChanges="orientation|smallestScreenSize|screenSize|screenLayout"
-            android:screenOrientation="fullUser"/>
+            android:theme="@style/CallTheme"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".call.VoiceCallActivity"
+            android:configChanges="orientation|smallestScreenSize|screenSize|screenLayout"
+            android:theme="@style/CallTheme"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <!-- [Calls] FCM -->
         <service
@@ -33,6 +59,16 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <!-- [QRCode] -->
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:screenOrientation="fullSensor"
+            tools:replace="screenOrientation" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

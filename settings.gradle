@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name='SendBirdCall Sample'
+rootProject.name='SendBird Calls'
