@@ -50,7 +50,7 @@ public abstract class CallActivity extends AppCompatActivity {
         STATE_ENDED
     }
 
-    private Context mContext;
+    Context mContext;
     private String mIncomingCallId;
     private Timer mEndingTimer;
 

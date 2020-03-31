@@ -39,6 +39,10 @@ public class AuthenticationUtils {
             SendBirdCall.authenticate(new AuthenticateParams(userId).setAccessToken(accessToken).setPushToken(pushToken, false), (user, e1) -> {
                 if (e1 != null) {
                     Log.d(TAG, "authenticate() => authenticate() => Failed (e1: " + e1.getMessage() + ")");
+                    if (e1.getMessage() != null) {
+                        ToastUtils.showToast(context, e1.getMessage());
+                    }
+
                     if (handler != null) {
                         handler.onResult(false);
                     }
@@ -69,6 +73,9 @@ public class AuthenticationUtils {
         SendBirdCall.deauthenticate(pushToken, e -> {
             if (e != null) {
                 Log.d(TAG, "deauthenticate() => Failed (e: " + e.getMessage() + ")");
+                if (e.getMessage() != null) {
+                    ToastUtils.showToast(context, e.getMessage());
+                }
             } else {
                 Log.d(TAG, "deauthenticate() => OK");
             }
@@ -106,7 +113,11 @@ public class AuthenticationUtils {
             Log.d(TAG, "autoAuthenticate() => authenticate()");
                 SendBirdCall.authenticate(new AuthenticateParams(userId).setAccessToken(accessToken).setPushToken(pushToken, false), (user, e) -> {
                 if (e != null) {
-                    Log.d(TAG, "autoAuthenticate() => authenticate() => e: " + e.getMessage());
+                    Log.d(TAG, "autoAuthenticate() => authenticate() => Failed (e: " + e.getMessage() + ")");
+                    if (e.getMessage() != null) {
+                        ToastUtils.showToast(context, e.getMessage());
+                    }
+
                     if (handler != null) {
                         handler.onResult(null);
                     }

@@ -17,6 +17,7 @@ import com.sendbird.calls.DirectCallUserRole;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.SendBirdVideoView;
 import com.sendbird.calls.quickstart.R;
+import com.sendbird.calls.quickstart.utils.ToastUtils;
 
 import org.webrtc.RendererCommon;
 
@@ -164,6 +165,10 @@ public class VideoCallActivity extends CallActivity {
             mDirectCall = SendBirdCall.dial(new DialParams(mCalleeId).setVideoCall(mIsVideoCall).setCallOptions(callOptions), (call, e) -> {
                 if (e != null) {
                     Log.d(TAG, "dial() => e: " + e.getMessage());
+                    if (e.getMessage() != null) {
+                        ToastUtils.showToast(mContext, e.getMessage());
+                    }
+
                     finishWithEnding(e.getMessage());
                     return;
                 }

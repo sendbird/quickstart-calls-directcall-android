@@ -30,7 +30,7 @@ Replace `YOUR_APPLICATION_ID` with the `Application ID` of the SendBird applicat
 ```java
 public class BaseApplication extends Application {
     ...
-    private static final String APP_ID = YOUR_APPLICATION_ID;
+    private static final String APP_ID = "YOUR_APPLICATION_ID";
     ...
 }
 ```
