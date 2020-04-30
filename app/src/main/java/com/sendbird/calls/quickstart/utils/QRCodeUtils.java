@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.sendbird.calls.quickstart.BaseApplication;
+import com.sendbird.calls.quickstart.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +22,7 @@ public class QRCodeUtils {
 
     public static void scanQRCode(Activity activity) {
         new IntentIntegrator(activity)
-            .setPrompt("")
+            .setPrompt(activity.getString(R.string.calls_scanning_a_qrcode_description))
             .setBeepEnabled(false)
             .initiateScan();
     }
@@ -59,6 +60,10 @@ public class QRCodeUtils {
                         }
                     });
                 } else {
+                    if (resultCode != Activity.RESULT_CANCELED) {
+                        ToastUtils.showToast(activity, activity.getString(R.string.calls_invalid_for_qrcode));
+                    }
+
                     if (handler != null) {
                         handler.onCompletion(false);
                     }

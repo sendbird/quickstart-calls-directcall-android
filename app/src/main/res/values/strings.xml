@@ -3,6 +3,7 @@
     <string name="calls_quickstart_version">Quickstart %s</string>
     <string name="calls_sdk_version">SDK %s</string>
     <string name="calls_sign_in_with_qrcode">SIGN IN WITH QR CODE</string>
+    <string name="calls_scanning_a_qrcode_description">Sign in by scanning a QR code found in the Calls Studio of the SendBird Dashboard</string>
     <string name="calls_or">Or</string>
     <string name="calls_sign_in_manually">SIGN IN MANUALLY</string>
     <string name="calls_sign_in_manually_title">Sign in manually</string>
@@ -38,5 +39,8 @@
     <string name="calls_end_result_accept_failed">Accept failed</string>
     <string name="calls_end_result_dial_failed">Dial failed</string>
     <string name="calls_end_result_other_device_accepted">Other device accepted</string>
+
+    <string name="calls_invalid_notifications_not_active_for_qrcode">Mobile sign-in is not enabled. Please first enable notifications on the SendBird Dashboard.</string>
+    <string name="calls_invalid_for_qrcode">This QR code is not valid. Please generate and scan a user-specific QR code in Calls studio.</string>
 
 </resources>

@@ -19,7 +19,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_logo_inverse_01"
+            android:background="@drawable/ic_logo_symbol"
             android:layout_marginBottom="24dp" />
 
         <TextView
