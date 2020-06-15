@@ -4,6 +4,8 @@
 
 The `SendBirdCalls` framework enables realtime VoIP communication between app users.  This repository contains a sample application intended to demonstrate a simple implementation of this framework. This readme document details how to get up and running using this sample application.
 
+> If you need any helps or have any issue / question, please visit [our community](https://community.sendbird.com) 
+
 ## Prerequisites
 
 - Android 4.1 (API level 16) or later
