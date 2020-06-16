@@ -17,7 +17,7 @@
         android:background="@drawable/icon_avatar" />
 
     <TextView
-        android:id="@+id/text_view_user_id"
+        android:id="@+id/text_view_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
@@ -27,13 +27,29 @@
         android:lineSpacingExtra="6sp"
         android:layout_marginTop="6dp" />
 
-    <TextView
-        android:id="@+id/text_view_nickname"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="#80000000"
-        android:lineSpacingExtra="0sp" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#61000000"
+            android:lineSpacingExtra="0sp"
+            android:layout_marginRight="4dp"
+            android:text="@string/calls_user_id" />
+
+        <TextView
+            android:id="@+id/text_view_user_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#80000000"
+            android:lineSpacingExtra="0sp" />
+
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"

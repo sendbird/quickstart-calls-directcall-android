@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.sendbird.calls.quickstart.R;
-import com.sendbird.calls.quickstart.utils.ActivityUtils;
+import com.sendbird.calls.quickstart.call.CallService;
 import com.sendbird.calls.quickstart.utils.PrefUtils;
 
 public class DialFragment extends Fragment {
@@ -84,7 +84,7 @@ public class DialFragment extends Fragment {
         mImageViewVideoCall.setOnClickListener(view1 -> {
             String calleeId = (mTextInputEditTextUserId.getText() != null ? mTextInputEditTextUserId.getText().toString() : "");
             if (!TextUtils.isEmpty(calleeId)) {
-                ActivityUtils.startCallActivityAsCaller(getContext(), calleeId, true);
+                CallService.startCallActivity(getContext(), calleeId, true);
                 PrefUtils.setCalleeId(getContext(), calleeId);
             }
         });
@@ -92,7 +92,7 @@ public class DialFragment extends Fragment {
         mImageViewVoiceCall.setOnClickListener(view1 -> {
             String calleeId = (mTextInputEditTextUserId.getText() != null ? mTextInputEditTextUserId.getText().toString() : "");
             if (!TextUtils.isEmpty(calleeId)) {
-                ActivityUtils.startCallActivityAsCaller(getContext(), calleeId, false);
+                CallService.startCallActivity(getContext(), calleeId, false);
                 PrefUtils.setCalleeId(getContext(), calleeId);
             }
         });

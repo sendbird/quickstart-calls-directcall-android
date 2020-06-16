@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.sendbird.calls.quickstart">
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- https://developer.android.com/guide/components/activities/background-starts -->
     <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" /> <!-- [QRCode] -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".BaseApplication"
@@ -50,6 +50,8 @@
             android:theme="@style/CallTheme"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
+        <service android:name=".call.CallService"
+            android:stopWithTask="false" />
 
         <!-- [Calls] FCM -->
         <service

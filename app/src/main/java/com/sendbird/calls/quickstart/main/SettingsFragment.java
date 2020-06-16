@@ -29,9 +29,9 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         User currentUser = SendBirdCall.getCurrentUser();
         if (currentUser != null) {
-            UserInfoUtils.setProfileImage(getActivity(), currentUser, view.findViewById(R.id.image_view_profile));
+            UserInfoUtils.setProfileImage(getContext(), currentUser, view.findViewById(R.id.image_view_profile));
+            UserInfoUtils.setNickname(getContext(), currentUser, view.findViewById(R.id.text_view_nickname));
             ((TextView)view.findViewById(R.id.text_view_user_id)).setText(currentUser.getUserId());
-            ((TextView)view.findViewById(R.id.text_view_nickname)).setText(currentUser.getNickname());
         }
 
         view.findViewById(R.id.linear_layout_application_information).setOnClickListener(view1 -> {

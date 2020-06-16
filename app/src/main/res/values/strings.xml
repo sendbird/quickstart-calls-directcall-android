@@ -1,9 +1,9 @@
 <resources>
-    <string name="calls_app_name">SendBird Calls</string>
+    <string name="calls_app_name">Sendbird Calls</string>
     <string name="calls_quickstart_version">Quickstart %s</string>
     <string name="calls_sdk_version">SDK %s</string>
     <string name="calls_sign_in_with_qrcode">SIGN IN WITH QR CODE</string>
-    <string name="calls_scanning_a_qrcode_description">Sign in by scanning a QR code found in the Calls Studio of the SendBird Dashboard</string>
+    <string name="calls_scanning_a_qrcode_description">Sign in by scanning a QR code found in the Calls Studio of the Sendbird Dashboard</string>
     <string name="calls_or">Or</string>
     <string name="calls_sign_in_manually">SIGN IN MANUALLY</string>
     <string name="calls_sign_in_manually_title">Sign in manually</string>
@@ -12,9 +12,19 @@
     <string name="calls_access_token">User access token (Optional)</string>
     <string name="calls_sign_in">SIGN IN</string>
 
+    <string name="calls_empty_nickname">—</string>
+    <string name="calls_user_id_format">User ID: %s</string>
+    <string name="calls_and_character">" · "</string>
+
+    <string name="calls_notification_voice_calling_content">Voice calling from %s</string>
+    <string name="calls_notification_video_calling_content">Video calling from %s</string>
+    <string name="calls_notification_end">END</string>
+    <string name="calls_notification_call">CALL</string>
+
     <string name="calls_make_a_call">Make a call</string>
     <string name="calls_make_a_call_description">Enter the user ID of the user you wish to call, then press one of the video or voice call buttons</string>
     <string name="calls_history">History</string>
+    <string name="calls_no_call_history">No call history</string>
     <string name="calls_settings">Settings</string>
     <string name="calls_application_information">Application information</string>
     <string name="calls_application_id">Application ID</string>
@@ -40,7 +50,7 @@
     <string name="calls_end_result_dial_failed">Dial failed</string>
     <string name="calls_end_result_other_device_accepted">Other device accepted</string>
 
-    <string name="calls_invalid_notifications_not_active_for_qrcode">Mobile sign-in is not enabled. Please first enable notifications on the SendBird Dashboard.</string>
+    <string name="calls_invalid_notifications_not_active_for_qrcode">Mobile sign-in is not enabled. Please first enable notifications on the Sendbird Dashboard.</string>
     <string name="calls_invalid_for_qrcode">This QR code is not valid. Please generate and scan a user-specific QR code in Calls studio.</string>
 
 </resources>

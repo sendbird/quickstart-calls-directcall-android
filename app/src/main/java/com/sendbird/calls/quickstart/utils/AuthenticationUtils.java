@@ -83,7 +83,22 @@ public class AuthenticationUtils {
         Log.d(TAG, "deauthenticate()");
 
         String pushToken = PrefUtils.getPushToken(context);
-        SendBirdCall.deauthenticate(pushToken, e -> {
+        if (!TextUtils.isEmpty(pushToken)) {
+            SendBirdCall.unregisterPushToken(pushToken, e -> {
+                if (e != null) {
+                    Log.d(TAG, "unregisterPushToken() => Failed (e: " + e.getMessage() + ")");
+                    showToastErrorMessage(context, e);
+                }
+
+                doDeauthenticate(context, handler);
+            });
+        } else {
+            doDeauthenticate(context, handler);
+        }
+    }
+
+    private static void doDeauthenticate(Context context, DeauthenticateHandler handler) {
+        SendBirdCall.deauthenticate(e -> {
             if (e != null) {
                 Log.d(TAG, "deauthenticate() => Failed (e: " + e.getMessage() + ")");
                 showToastErrorMessage(context, e);

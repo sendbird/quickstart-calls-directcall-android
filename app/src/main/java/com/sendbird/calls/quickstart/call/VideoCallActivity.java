@@ -172,7 +172,11 @@ public class VideoCallActivity extends CallActivity {
                     finishWithEnding(e.getMessage());
                     return;
                 }
+
                 Log.d(TAG, "dial() => OK");
+                if (mDirectCall != null) {
+                    CallService.startService(mContext, mDirectCall, false);
+                }
             });
 
             if (mDirectCall != null) {

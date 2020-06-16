@@ -1,7 +1,6 @@
 package com.sendbird.calls.quickstart.main;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,14 +8,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.sendbird.calls.SendBirdCall;
-import com.sendbird.calls.User;
 import com.sendbird.calls.quickstart.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class DialFragmentPagerAdapter extends FragmentPagerAdapter {
+class MainPagerAdapter extends FragmentPagerAdapter {
 
     private final List<FragmentInfo> mFragmentList = new ArrayList<>();
 
@@ -30,22 +27,11 @@ class DialFragmentPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    DialFragmentPagerAdapter(@NonNull Context context, @NonNull FragmentManager fm, int behavior) {
+    MainPagerAdapter(@NonNull Context context, @NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
 
-        String nicknameOrUserId = "";
-        User currentUser = SendBirdCall.getCurrentUser();
-        if (currentUser != null) {
-            nicknameOrUserId = currentUser.getNickname();
-            if (TextUtils.isEmpty(nicknameOrUserId)) {
-                nicknameOrUserId = currentUser.getUserId();
-            }
-        }
-
-        mFragmentList.add(new FragmentInfo(nicknameOrUserId, new DialFragment()));
-        if (MainActivity.sHistoryFeature) {
-            mFragmentList.add(new FragmentInfo(context.getString(R.string.calls_history), new HistoryFragment()));
-        }
+        mFragmentList.add(new FragmentInfo("", new DialFragment()));
+        mFragmentList.add(new FragmentInfo(context.getString(R.string.calls_history), new HistoryFragment()));
         mFragmentList.add(new FragmentInfo(context.getString(R.string.calls_settings), new SettingsFragment()));
     }
 

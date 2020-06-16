@@ -14,6 +14,7 @@ import com.sendbird.calls.DialParams;
 import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.quickstart.R;
+import com.sendbird.calls.quickstart.utils.TimeUtils;
 import com.sendbird.calls.quickstart.utils.ToastUtils;
 
 import java.util.Locale;
@@ -144,7 +145,11 @@ public class VoiceCallActivity extends CallActivity {
                     finishWithEnding(e.getMessage());
                     return;
                 }
+
                 Log.d(TAG, "dial() => OK");
+                if (mDirectCall != null) {
+                    CallService.startService(mContext, mDirectCall, false);
+                }
             });
 
             if (mDirectCall != null) {
@@ -162,6 +167,10 @@ public class VoiceCallActivity extends CallActivity {
         }
 
         switch (mState) {
+            case STATE_ACCEPTING:
+                cancelCallDurationTimer();
+                break;
+
             case STATE_CONNECTED: {
                 setInfo(call, "");
                 mLinearLayoutInfo.setVisibility(View.VISIBLE);
@@ -185,35 +194,12 @@ public class VoiceCallActivity extends CallActivity {
                 @Override
                 public void run() {
                     runOnUiThread(() -> {
-                        String callDuration = getTimeString(call.getDuration());
+                        String callDuration = TimeUtils.getTimeString(call.getDuration());
                         mTextViewStatus.setText(callDuration);
                     });
                 }
             }, 0, 1000);
         }
-    }
-
-    private String getTimeString(long periodMs) {
-        final String result;
-        int totalSec = (int)(periodMs / 1000);
-        int hour = 0, min, sec;
-
-        if (totalSec >= 3600) {
-            hour = totalSec / 3600;
-            totalSec = totalSec % 3600;
-        }
-
-        min = totalSec / 60;
-        sec = totalSec % 60;
-
-        if (hour > 0) {
-            result = String.format(Locale.getDefault(), "%d:%02d:%02d", hour, min, sec);
-        } else if (min > 0) {
-            result = String.format(Locale.getDefault(), "%d:%02d", min, sec);
-        } else {
-            result = String.format(Locale.getDefault(), "0:%02d", sec);
-        }
-        return result;
     }
 
     private void cancelCallDurationTimer() {

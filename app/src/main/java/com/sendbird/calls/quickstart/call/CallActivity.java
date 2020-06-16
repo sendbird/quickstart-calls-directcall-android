@@ -23,8 +23,8 @@ import com.sendbird.calls.DirectCallUser;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.handler.DirectCallListener;
 import com.sendbird.calls.quickstart.R;
-import com.sendbird.calls.quickstart.utils.ActivityUtils;
 import com.sendbird.calls.quickstart.utils.AuthenticationUtils;
+import com.sendbird.calls.quickstart.utils.BroadcastUtils;
 import com.sendbird.calls.quickstart.utils.UserInfoUtils;
 
 import java.util.ArrayList;
@@ -52,6 +52,7 @@ public abstract class CallActivity extends AppCompatActivity {
 
     Context mContext;
     private String mIncomingCallId;
+    private boolean mIsEnd;
     private Timer mEndingTimer;
 
     STATE mState;
@@ -103,7 +104,17 @@ public abstract class CallActivity extends AppCompatActivity {
         initViews();
         setViews();
 
-        mIncomingCallId = getIntent().getStringExtra(ActivityUtils.EXTRA_INCOMING_CALL_ID);
+        init(getIntent());
+    }
+
+    private void init(Intent intent) {
+        mIncomingCallId = intent.getStringExtra(CallService.EXTRA_CALL_ID);
+        mIsEnd = intent.getBooleanExtra(CallService.EXTRA_IS_END, false);
+
+        if (mIsEnd) {
+            CallService.stopService(mContext);
+        }
+
         if (mIncomingCallId != null) {  // as callee
             mDirectCall = SendBirdCall.getCall(mIncomingCallId);
             mCalleeId = mDirectCall.getCallee().getUserId();
@@ -111,12 +122,24 @@ public abstract class CallActivity extends AppCompatActivity {
 
             setListener(mDirectCall);
         } else {    // as caller
-            mCalleeId = getIntent().getStringExtra(ActivityUtils.EXTRA_CALLEE_ID);
-            mIsVideoCall = getIntent().getBooleanExtra(ActivityUtils.EXTRA_IS_VIDEO_CALL, false);
+            mCalleeId = intent.getStringExtra(CallService.EXTRA_CALLEE_ID);
+            mIsVideoCall = intent.getBooleanExtra(CallService.EXTRA_IS_VIDEO_CALL, false);
         }
 
         if (setInitialState()) {
             checkAuthenticate();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d(TAG, "onNewIntent()");
+
+        mIsEnd = intent.getBooleanExtra(CallService.EXTRA_IS_END, false);
+        if (mIsEnd) {
+            CallService.stopService(mContext);
+            end(mDirectCall);
         }
     }
 
@@ -141,9 +164,7 @@ public abstract class CallActivity extends AppCompatActivity {
 
     protected void setViews() {
         mImageViewDecline.setOnClickListener(view -> {
-            if (mDirectCall != null) {
-                end(mDirectCall);
-            }
+            end(mDirectCall);
         });
 
         mImageViewAccept.setOnClickListener(view -> {
@@ -152,7 +173,7 @@ public abstract class CallActivity extends AppCompatActivity {
                 return;
             }
 
-            if (mState == STATE.STATE_ENDING) {
+            if (mState == STATE.STATE_ENDING || mState == STATE.STATE_ENDED) {
                 Log.d(TAG, "mImageViewAccept clicked => Already ending call.");
                 return;
             }
@@ -163,7 +184,6 @@ public abstract class CallActivity extends AppCompatActivity {
             }
 
             setState(STATE.STATE_ACCEPTING, mDirectCall);
-            startCall(true);
         });
 
         if (mIsAudioEnabled) {
@@ -188,9 +208,7 @@ public abstract class CallActivity extends AppCompatActivity {
         });
 
         mImageViewEnd.setOnClickListener(view -> {
-            if (mDirectCall != null) {
-                end(mDirectCall);
-            }
+            end(mDirectCall);
         });
     }
 
@@ -208,6 +226,8 @@ public abstract class CallActivity extends AppCompatActivity {
             public void onEnded(DirectCall call) {
                 Log.d(TAG, "onEnded()");
                 setState(STATE.STATE_ENDED, call);
+
+                BroadcastUtils.sendCallLogBroadcast(mContext, call.getCallLog());
             }
 
             @Override
@@ -229,18 +249,6 @@ public abstract class CallActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Log.d(TAG, "onNewIntent()");
-
-        String incomingCallId = intent.getStringExtra(ActivityUtils.EXTRA_INCOMING_CALL_ID);
-        if (incomingCallId != null) {
-            DirectCall call = SendBirdCall.getCall(incomingCallId);
-            call.end();
-        }
-    }
-
     @TargetApi(19)
     private static int getSystemUiVisibility() {
         int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -259,6 +267,8 @@ public abstract class CallActivity extends AppCompatActivity {
                 setState(STATE.STATE_ENDED, mDirectCall);
                 return false;
             }
+
+            CallService.startService(mContext, mDirectCall, false);
 
             setState(STATE.STATE_INCOMING, mDirectCall);
         } else {
@@ -318,8 +328,15 @@ public abstract class CallActivity extends AppCompatActivity {
     }
 
     private void ready() {
+        if (mIsEnd) {
+            end(mDirectCall);
+            return;
+        }
+
         if (mState == STATE.STATE_OUTGOING) {
             startCall(false);
+        } else if (mState == STATE.STATE_INCOMING) {
+            setState(STATE.STATE_ACCEPTING, mDirectCall);
         }
     }
 
@@ -348,6 +365,7 @@ public abstract class CallActivity extends AppCompatActivity {
             }
 
             case STATE_ACCEPTING: {
+                startCall(true);
                 setInfo(call, getString(R.string.calls_connecting_call));
                 break;
             }
@@ -406,7 +424,7 @@ public abstract class CallActivity extends AppCompatActivity {
         DirectCallUser remoteUser = (call != null ? call.getRemoteUser() : null);
         if (remoteUser != null) {
             UserInfoUtils.setProfileImage(mContext, remoteUser, mImageViewProfile);
-            UserInfoUtils.setUserId(remoteUser, mTextViewUserId);
+            UserInfoUtils.setNicknameOrUserId(remoteUser, mTextViewUserId);
         } else {
             mTextViewUserId.setText(mCalleeId);
         }
@@ -476,7 +494,7 @@ public abstract class CallActivity extends AppCompatActivity {
         if (call != null) {
             Log.d(TAG, "end(callId: " + call.getCallId() + ")");
 
-            if (mState == STATE.STATE_ENDING) {
+            if (mState == STATE.STATE_ENDING || mState == STATE.STATE_ENDED) {
                 Log.d(TAG, "Already ending call.");
                 return;
             }
@@ -497,6 +515,7 @@ public abstract class CallActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     Log.d(TAG, "finish()");
                     finish();
+                    CallService.stopService(mContext);
                 });
                 }
             }, ENDING_TIME_MS);
@@ -506,6 +525,7 @@ public abstract class CallActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy()");
         sIsRunning = false;
     }
 }
