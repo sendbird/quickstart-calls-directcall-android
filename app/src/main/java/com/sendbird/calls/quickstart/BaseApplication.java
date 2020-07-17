@@ -10,17 +10,17 @@ import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.handler.DirectCallListener;
 import com.sendbird.calls.handler.SendBirdCallListener;
-import com.sendbird.calls.quickstart.call.CallActivity;
 import com.sendbird.calls.quickstart.call.CallService;
+import com.sendbird.calls.quickstart.utils.BroadcastUtils;
 import com.sendbird.calls.quickstart.utils.PrefUtils;
 
 import java.util.UUID;
 
 public class BaseApplication extends Application {
 
-    public static final String VERSION = "1.1.3";
+    public static final String VERSION = "1.2.0";
 
-    private static final String TAG = "BaseApplication";
+    public static final String TAG = "SendBirdCalls";
 
     // Refer to "https://github.com/sendbird/quickstart-calls-android".
     public static final String APP_ID = "YOUR_APPLICATION_ID";
@@ -28,13 +28,13 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate()");
+        Log.i(BaseApplication.TAG, "[BaseApplication] onCreate()");
 
         initSendBirdCall(PrefUtils.getAppId(getApplicationContext()));
     }
 
     public boolean initSendBirdCall(String appId) {
-        Log.d(TAG, "initSendBirdCall(appId: " + appId + ")");
+        Log.i(BaseApplication.TAG, "[BaseApplication] initSendBirdCall(appId: " + appId + ")");
         Context context = getApplicationContext();
 
         if (TextUtils.isEmpty(appId)) {
@@ -46,8 +46,10 @@ public class BaseApplication extends Application {
             SendBirdCall.addListener(UUID.randomUUID().toString(), new SendBirdCallListener() {
                 @Override
                 public void onRinging(DirectCall call) {
-                    Log.d(TAG, "onRinging() => callId: " + call.getCallId());
-                    if (CallActivity.sIsRunning) {
+                    int ongoingCallCount = SendBirdCall.getOngoingCallCount();
+                    Log.i(BaseApplication.TAG, "[BaseApplication] onRinging() => callId: " + call.getCallId() + ", getOngoingCallCount(): " + ongoingCallCount);
+
+                    if (ongoingCallCount >= 2) {
                         call.end();
                         return;
                     }
@@ -59,13 +61,18 @@ public class BaseApplication extends Application {
 
                         @Override
                         public void onEnded(DirectCall call) {
-                            if (!CallActivity.sIsRunning) {
+                            int ongoingCallCount = SendBirdCall.getOngoingCallCount();
+                            Log.i(BaseApplication.TAG, "[BaseApplication] onEnded() => callId: " + call.getCallId() + ", getOngoingCallCount(): " + ongoingCallCount);
+
+                            BroadcastUtils.sendCallLogBroadcast(context, call.getCallLog());
+
+                            if (ongoingCallCount == 0) {
                                 CallService.stopService(context);
                             }
                         }
                     });
 
-                    CallService.startService(context, call, true);
+                    CallService.onRinging(context, call);
                 }
             });
             return true;

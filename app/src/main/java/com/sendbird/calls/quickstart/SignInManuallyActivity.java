@@ -1,6 +1,5 @@
 package com.sendbird.calls.quickstart;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
@@ -24,7 +23,6 @@ import com.sendbird.calls.quickstart.utils.PrefUtils;
 public class SignInManuallyActivity extends AppCompatActivity {
 
     private Context mContext;
-    private Activity mParentActivity;
     private InputMethodManager mInputMethodManager;
 
     private TextInputLayout mTextInputLayoutAppId;
@@ -41,7 +39,6 @@ public class SignInManuallyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in_manually);
 
         mContext = this;
-        mParentActivity = getParent();
         mInputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
         initViews();

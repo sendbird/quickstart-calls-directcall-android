@@ -7,21 +7,20 @@ import android.util.Log;
 import com.sendbird.calls.AuthenticateParams;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.SendBirdException;
+import com.sendbird.calls.quickstart.BaseApplication;
 import com.sendbird.calls.quickstart.R;
 
 public class AuthenticationUtils {
-
-    private static final String TAG = "AuthenticationUtils";
 
     public interface AuthenticateHandler {
         void onResult(boolean isSuccess);
     }
 
     public static void authenticate(Context context, String userId, String accessToken, AuthenticateHandler handler) {
-        Log.d(TAG, "authenticate()");
+        Log.i(BaseApplication.TAG, "[AuthenticationUtils] authenticate()");
 
         if (userId == null) {
-            Log.d(TAG, "authenticate() => Failed (userId == null)");
+            Log.i(BaseApplication.TAG, "[AuthenticationUtils] authenticate() => Failed (userId == null)");
             if (handler != null) {
                 handler.onResult(false);
             }
@@ -30,17 +29,17 @@ public class AuthenticationUtils {
 
         PushUtils.getPushToken(context, (pushToken, e) -> {
             if (e != null) {
-                Log.d(TAG, "authenticate() => Failed (e: " + e.getMessage() + ")");
+                Log.i(BaseApplication.TAG, "[AuthenticationUtils] authenticate() => Failed (e: " + e.getMessage() + ")");
                 if (handler != null) {
                     handler.onResult(false);
                 }
                 return;
             }
 
-            Log.d(TAG, "authenticate() => authenticate()");
+            Log.i(BaseApplication.TAG, "[AuthenticationUtils] authenticate() => authenticate()");
             SendBirdCall.authenticate(new AuthenticateParams(userId).setAccessToken(accessToken), (user, e1) -> {
                 if (e1 != null) {
-                    Log.d(TAG, "authenticate() => authenticate() => Failed (e1: " + e1.getMessage() + ")");
+                    Log.i(BaseApplication.TAG, "[AuthenticationUtils] authenticate() => authenticate() => Failed (e1: " + e1.getMessage() + ")");
                     showToastErrorMessage(context, e1);
 
                     if (handler != null) {
@@ -49,10 +48,10 @@ public class AuthenticationUtils {
                     return;
                 }
 
-                Log.d(TAG, "authenticate() => registerPushToken()");
+                Log.i(BaseApplication.TAG, "[AuthenticationUtils] authenticate() => registerPushToken()");
                 SendBirdCall.registerPushToken(pushToken, false, e2 -> {
                     if (e2 != null) {
-                        Log.d(TAG, "authenticate() => registerPushToken() => Failed (e2: " + e2.getMessage() + ")");
+                        Log.i(BaseApplication.TAG, "[AuthenticationUtils] authenticate() => registerPushToken() => Failed (e2: " + e2.getMessage() + ")");
                         showToastErrorMessage(context, e2);
 
                         if (handler != null) {
@@ -66,7 +65,7 @@ public class AuthenticationUtils {
                     PrefUtils.setAccessToken(context, accessToken);
                     PrefUtils.setPushToken(context, pushToken);
 
-                    Log.d(TAG, "authenticate() => authenticate() => OK");
+                    Log.i(BaseApplication.TAG, "[AuthenticationUtils] authenticate() => authenticate() => OK");
                     if (handler != null) {
                         handler.onResult(true);
                     }
@@ -80,13 +79,13 @@ public class AuthenticationUtils {
     }
 
     public static void deauthenticate(Context context, DeauthenticateHandler handler) {
-        Log.d(TAG, "deauthenticate()");
+        Log.i(BaseApplication.TAG, "[AuthenticationUtils] deauthenticate()");
 
         String pushToken = PrefUtils.getPushToken(context);
         if (!TextUtils.isEmpty(pushToken)) {
             SendBirdCall.unregisterPushToken(pushToken, e -> {
                 if (e != null) {
-                    Log.d(TAG, "unregisterPushToken() => Failed (e: " + e.getMessage() + ")");
+                    Log.i(BaseApplication.TAG, "[AuthenticationUtils] unregisterPushToken() => Failed (e: " + e.getMessage() + ")");
                     showToastErrorMessage(context, e);
                 }
 
@@ -100,10 +99,10 @@ public class AuthenticationUtils {
     private static void doDeauthenticate(Context context, DeauthenticateHandler handler) {
         SendBirdCall.deauthenticate(e -> {
             if (e != null) {
-                Log.d(TAG, "deauthenticate() => Failed (e: " + e.getMessage() + ")");
+                Log.i(BaseApplication.TAG, "[AuthenticationUtils] deauthenticate() => Failed (e: " + e.getMessage() + ")");
                 showToastErrorMessage(context, e);
             } else {
-                Log.d(TAG, "deauthenticate() => OK");
+                Log.i(BaseApplication.TAG, "[AuthenticationUtils] deauthenticate() => OK");
             }
 
             PrefUtils.setUserId(context, null);
@@ -122,10 +121,10 @@ public class AuthenticationUtils {
     }
 
     public static void autoAuthenticate(Context context, AutoAuthenticateHandler handler) {
-        Log.d(TAG, "autoAuthenticate()");
+        Log.i(BaseApplication.TAG, "[AuthenticationUtils] autoAuthenticate()");
 
         if (SendBirdCall.getCurrentUser() != null) {
-            Log.d(TAG, "autoAuthenticate() => OK (SendBirdCall.getCurrentUser() != null)");
+            Log.i(BaseApplication.TAG, "[AuthenticationUtils] autoAuthenticate() => OK (SendBirdCall.getCurrentUser() != null)");
             if (handler != null) {
                 handler.onResult(SendBirdCall.getCurrentUser().getUserId());
             }
@@ -136,10 +135,10 @@ public class AuthenticationUtils {
         String accessToken = PrefUtils.getAccessToken(context);
         String pushToken = PrefUtils.getPushToken(context);
         if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(pushToken)) {
-            Log.d(TAG, "autoAuthenticate() => authenticate()");
+            Log.i(BaseApplication.TAG, "[AuthenticationUtils] autoAuthenticate() => authenticate()");
             SendBirdCall.authenticate(new AuthenticateParams(userId).setAccessToken(accessToken), (user, e) -> {
                 if (e != null) {
-                    Log.d(TAG, "autoAuthenticate() => authenticate() => Failed (e: " + e.getMessage() + ")");
+                    Log.i(BaseApplication.TAG, "[AuthenticationUtils] autoAuthenticate() => authenticate() => Failed (e: " + e.getMessage() + ")");
                     showToastErrorMessage(context, e);
 
                     if (handler != null) {
@@ -148,10 +147,10 @@ public class AuthenticationUtils {
                     return;
                 }
 
-                Log.d(TAG, "autoAuthenticate() => registerPushToken()");
+                Log.i(BaseApplication.TAG, "[AuthenticationUtils] autoAuthenticate() => registerPushToken()");
                 SendBirdCall.registerPushToken(pushToken, false, e1 -> {
                     if (e1 != null) {
-                        Log.d(TAG, "autoAuthenticate() => registerPushToken() => Failed (e1: " + e1.getMessage() + ")");
+                        Log.i(BaseApplication.TAG, "[AuthenticationUtils] autoAuthenticate() => registerPushToken() => Failed (e1: " + e1.getMessage() + ")");
                         showToastErrorMessage(context, e1);
 
                         if (handler != null) {
@@ -160,14 +159,14 @@ public class AuthenticationUtils {
                         return;
                     }
 
-                    Log.d(TAG, "autoAuthenticate() => authenticate() => OK (Authenticated)");
+                    Log.i(BaseApplication.TAG, "[AuthenticationUtils] autoAuthenticate() => authenticate() => OK (Authenticated)");
                     if (handler != null) {
                         handler.onResult(userId);
                     }
                 });
             });
         } else {
-            Log.d(TAG, "autoAuthenticate() => Failed (No userId and pushToken)");
+            Log.i(BaseApplication.TAG, "[AuthenticationUtils] autoAuthenticate() => Failed (No userId and pushToken)");
             if (handler != null) {
                 handler.onResult(null);
             }
@@ -176,8 +175,8 @@ public class AuthenticationUtils {
 
     private static void showToastErrorMessage(Context context, SendBirdException e) {
         if (context != null) {
-            if (e.getCode() == 1800200) {
-                ToastUtils.showToast(context, context.getString(R.string.calls_invalid_notifications_not_active_for_qrcode));
+            if (e.getCode() == 400111) {
+                ToastUtils.showToast(context, context.getString(R.string.calls_invalid_notifications_setting_in_dashboard));
             } else {
                 ToastUtils.showToast(context, e.getMessage());
             }

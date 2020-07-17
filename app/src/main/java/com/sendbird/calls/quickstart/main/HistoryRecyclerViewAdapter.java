@@ -89,11 +89,11 @@ class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerVie
         holder.textViewStartAt.setText(TimeUtils.getDateString(callLog.getStartedAt()));
 
         holder.imageViewVideoCall.setOnClickListener(view -> {
-            CallService.startCallActivity(mContext, user.getUserId(), true);
+            CallService.dial(mContext, user.getUserId(), true);
         });
 
         holder.imageViewVoiceCall.setOnClickListener(view -> {
-            CallService.startCallActivity(mContext, user.getUserId(), false);
+            CallService.dial(mContext, user.getUserId(), false);
         });
     }
 

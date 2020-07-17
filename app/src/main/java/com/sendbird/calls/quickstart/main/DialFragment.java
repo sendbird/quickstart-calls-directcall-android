@@ -84,7 +84,7 @@ public class DialFragment extends Fragment {
         mImageViewVideoCall.setOnClickListener(view1 -> {
             String calleeId = (mTextInputEditTextUserId.getText() != null ? mTextInputEditTextUserId.getText().toString() : "");
             if (!TextUtils.isEmpty(calleeId)) {
-                CallService.startCallActivity(getContext(), calleeId, true);
+                CallService.dial(getContext(), calleeId, true);
                 PrefUtils.setCalleeId(getContext(), calleeId);
             }
         });
@@ -92,7 +92,7 @@ public class DialFragment extends Fragment {
         mImageViewVoiceCall.setOnClickListener(view1 -> {
             String calleeId = (mTextInputEditTextUserId.getText() != null ? mTextInputEditTextUserId.getText().toString() : "");
             if (!TextUtils.isEmpty(calleeId)) {
-                CallService.startCallActivity(getContext(), calleeId, false);
+                CallService.dial(getContext(), calleeId, false);
                 PrefUtils.setCalleeId(getContext(), calleeId);
             }
         });

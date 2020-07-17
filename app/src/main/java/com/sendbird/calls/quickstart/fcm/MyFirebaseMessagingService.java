@@ -7,36 +7,27 @@ import androidx.annotation.NonNull;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.sendbird.calls.SendBirdCall;
+import com.sendbird.calls.quickstart.BaseApplication;
 import com.sendbird.calls.quickstart.utils.PrefUtils;
 import com.sendbird.calls.quickstart.utils.PushUtils;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
-    private static final String TAG = "MyFirebaseMessagingServ";
-
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         if (SendBirdCall.handleFirebaseMessageData(remoteMessage.getData())) {
-            Log.d(TAG, "[SendBirdCall Message] onMessageReceived() => " + remoteMessage.getData().toString());
-        } else {
-            Log.d(TAG, "onMessageReceived() => From: " + remoteMessage.getFrom());
-            if (remoteMessage.getData().size() > 0) {
-                Log.d(TAG, "onMessageReceived() => Data: " + remoteMessage.getData().toString());
-            }
-            if (remoteMessage.getNotification() != null) {
-                Log.d(TAG, "onMessageReceived() => Notification Body: " + remoteMessage.getNotification().getBody());
-            }
+            Log.i(BaseApplication.TAG, "[MyFirebaseMessagingService] onMessageReceived() => " + remoteMessage.getData().toString());
         }
     }
 
     @Override
     public void onNewToken(@NonNull String token) {
-        Log.d(TAG, "onNewToken(token: " + token + ")");
+        Log.i(BaseApplication.TAG, "[MyFirebaseMessagingService] onNewToken(token: " + token + ")");
 
         if (SendBirdCall.getCurrentUser() != null)  {
             PushUtils.registerPushToken(getApplicationContext(), token, e -> {
                 if (e != null) {
-                    Log.d(TAG, "registerPushTokenForCurrentUser() => e: " + e.getMessage());
+                    Log.i(BaseApplication.TAG, "[MyFirebaseMessagingService] registerPushTokenForCurrentUser() => e: " + e.getMessage());
                 }
             });
         } else {

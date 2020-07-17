@@ -1,13 +1,18 @@
 package com.sendbird.calls.quickstart.main;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
@@ -15,15 +20,24 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 import com.sendbird.calls.DirectCallLog;
 import com.sendbird.calls.SendBirdCall;
+import com.sendbird.calls.quickstart.BaseApplication;
 import com.sendbird.calls.quickstart.R;
 import com.sendbird.calls.quickstart.utils.BroadcastUtils;
+import com.sendbird.calls.quickstart.utils.ToastUtils;
 import com.sendbird.calls.quickstart.utils.UserInfoUtils;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final String[] MANDATORY_PERMISSIONS = {
+            Manifest.permission.RECORD_AUDIO,   // for VoiceCall and VideoCall
+            Manifest.permission.CAMERA          // for VideoCall
+    };
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
 
     private Context mContext;
+
     private LinearLayout mLinearLayoutToolbar;
     private MainPagerAdapter mMainPagerAdapter;
     private BroadcastReceiver mReceiver;
@@ -38,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
         registerReceiver();
+        checkPermissions();
     }
 
     @Override
@@ -110,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void registerReceiver() {
+        Log.i(BaseApplication.TAG, "[MainActivity] registerReceiver()");
+
         if (mReceiver != null) {
             return;
         }
@@ -117,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                Log.i(BaseApplication.TAG, "[MainActivity] onReceive()");
+
                 DirectCallLog callLog = (DirectCallLog)intent.getSerializableExtra(BroadcastUtils.INTENT_EXTRA_CALL_LOG);
                 if (callLog != null) {
                     HistoryFragment historyFragment = (HistoryFragment) mMainPagerAdapter.getItem(1);
@@ -131,9 +150,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void unregisterReceiver() {
+        Log.i(BaseApplication.TAG, "[MainActivity] unregisterReceiver()");
+
         if (mReceiver != null) {
             unregisterReceiver(mReceiver);
             mReceiver = null;
+        }
+    }
+
+    private void checkPermissions() {
+        ArrayList<String> deniedPermissions = new ArrayList<>();
+        for (String permission : MANDATORY_PERMISSIONS) {
+            if (checkCallingOrSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                deniedPermissions.add(permission);
+            }
+        }
+
+        if (deniedPermissions.size() > 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(deniedPermissions.toArray(new String[0]), REQUEST_PERMISSIONS_REQUEST_CODE);
+            } else {
+                ToastUtils.showToast(mContext, "Permission denied.");
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+            boolean allowed = true;
+
+            for (int result : grantResults) {
+                allowed = allowed && (result == PackageManager.PERMISSION_GRANTED);
+            }
+
+            if (!allowed) {
+                ToastUtils.showToast(mContext, "Permission denied.");
+            }
         }
     }
 }

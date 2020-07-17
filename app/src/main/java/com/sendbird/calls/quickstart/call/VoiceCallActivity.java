@@ -1,6 +1,5 @@
 package com.sendbird.calls.quickstart.call;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.util.Log;
@@ -13,22 +12,16 @@ import com.sendbird.calls.CallOptions;
 import com.sendbird.calls.DialParams;
 import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.SendBirdCall;
+import com.sendbird.calls.quickstart.BaseApplication;
 import com.sendbird.calls.quickstart.R;
 import com.sendbird.calls.quickstart.utils.TimeUtils;
 import com.sendbird.calls.quickstart.utils.ToastUtils;
 
-import java.util.Locale;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class VoiceCallActivity extends CallActivity {
-
-    private static final String TAG = "VoiceCallActivity";
-
-    private static final String[] MANDATORY_PERMISSIONS = {
-        Manifest.permission.RECORD_AUDIO
-    };
 
     private Timer mCallDurationTimer;
 
@@ -42,14 +35,9 @@ public class VoiceCallActivity extends CallActivity {
     }
 
     @Override
-    protected String[] getMandatoryPermissions() {
-        return MANDATORY_PERMISSIONS;
-    }
-
-    @Override
     protected void initViews() {
         super.initViews();
-        Log.d(TAG, "initViews()");
+        Log.i(BaseApplication.TAG, "[VoiceCallActivity] initViews()");
 
         mImageViewSpeakerphone = findViewById(R.id.image_view_speakerphone);
     }
@@ -99,7 +87,7 @@ public class VoiceCallActivity extends CallActivity {
     }
 
     @Override
-    protected void audioDeviceChanged(DirectCall call, AudioDevice currentAudioDevice, Set<AudioDevice> availableAudioDevices) {
+    protected void setAudioDevice(AudioDevice currentAudioDevice, Set<AudioDevice> availableAudioDevices) {
         if (currentAudioDevice == AudioDevice.SPEAKERPHONE) {
             mImageViewSpeakerphone.setSelected(true);
             mImageViewBluetooth.setSelected(false);
@@ -129,15 +117,15 @@ public class VoiceCallActivity extends CallActivity {
         callOptions.setAudioEnabled(mIsAudioEnabled);
 
         if (amICallee) {
-            Log.d(TAG, "accept()");
+            Log.i(BaseApplication.TAG, "[VoiceCallActivity] accept()");
             if (mDirectCall != null) {
                 mDirectCall.accept(new AcceptParams().setCallOptions(callOptions));
             }
         } else {
-            Log.d(TAG, "dial()");
-            mDirectCall = SendBirdCall.dial(new DialParams(mCalleeId).setVideoCall(mIsVideoCall).setCallOptions(callOptions), (call, e) -> {
+            Log.i(BaseApplication.TAG, "[VoiceCallActivity] dial()");
+            mDirectCall = SendBirdCall.dial(new DialParams(mCalleeIdToDial).setVideoCall(mIsVideoCall).setCallOptions(callOptions), (call, e) -> {
                 if (e != null) {
-                    Log.d(TAG, "dial() => e: " + e.getMessage());
+                    Log.i(BaseApplication.TAG, "[VoiceCallActivity] dial() => e: " + e.getMessage());
                     if (e.getMessage() != null) {
                         ToastUtils.showToast(mContext, e.getMessage());
                     }
@@ -146,15 +134,11 @@ public class VoiceCallActivity extends CallActivity {
                     return;
                 }
 
-                Log.d(TAG, "dial() => OK");
-                if (mDirectCall != null) {
-                    CallService.startService(mContext, mDirectCall, false);
-                }
+                Log.i(BaseApplication.TAG, "[VoiceCallActivity] dial() => OK");
+                updateCallService();
             });
 
-            if (mDirectCall != null) {
-                setListener(mDirectCall);
-            }
+            setListener(mDirectCall);
         }
     }
 
@@ -212,7 +196,7 @@ public class VoiceCallActivity extends CallActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy()");
+        Log.i(BaseApplication.TAG, "[VoiceCallActivity] onDestroy()");
         cancelCallDurationTimer();
     }
 }

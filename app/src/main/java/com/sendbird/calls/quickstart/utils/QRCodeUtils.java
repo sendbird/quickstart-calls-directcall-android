@@ -61,7 +61,7 @@ public class QRCodeUtils {
                     });
                 } else {
                     if (resultCode != Activity.RESULT_CANCELED) {
-                        ToastUtils.showToast(activity, activity.getString(R.string.calls_invalid_for_qrcode));
+                        ToastUtils.showToast(activity, activity.getString(R.string.calls_invalid_qrcode));
                     }
 
                     if (handler != null) {

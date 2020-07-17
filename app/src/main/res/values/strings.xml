@@ -18,8 +18,9 @@
 
     <string name="calls_notification_voice_calling_content">Voice calling from %s</string>
     <string name="calls_notification_video_calling_content">Video calling from %s</string>
-    <string name="calls_notification_end">END</string>
-    <string name="calls_notification_call">CALL</string>
+    <string name="calls_notification_accept">Accept</string>
+    <string name="calls_notification_decline">Decline</string>
+    <string name="calls_notification_end">End</string>
 
     <string name="calls_make_a_call">Make a call</string>
     <string name="calls_make_a_call_description">Enter the user ID of the user you wish to call, then press one of the video or voice call buttons</string>
@@ -50,7 +51,7 @@
     <string name="calls_end_result_dial_failed">Dial failed</string>
     <string name="calls_end_result_other_device_accepted">Other device accepted</string>
 
-    <string name="calls_invalid_notifications_not_active_for_qrcode">Mobile sign-in is not enabled. Please first enable notifications on the Sendbird Dashboard.</string>
-    <string name="calls_invalid_for_qrcode">This QR code is not valid. Please generate and scan a user-specific QR code in Calls studio.</string>
+    <string name="calls_invalid_notifications_setting_in_dashboard">Mobile sign-in is not enabled. Please first enable notifications on the Sendbird Dashboard.</string>
+    <string name="calls_invalid_qrcode">This QR code is not valid. Please generate and scan a user-specific QR code in Calls studio.</string>
 
 </resources>

@@ -1,6 +1,5 @@
 package com.sendbird.calls.quickstart.call;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.util.Log;
@@ -16,6 +15,7 @@ import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.DirectCallUserRole;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.SendBirdVideoView;
+import com.sendbird.calls.quickstart.BaseApplication;
 import com.sendbird.calls.quickstart.R;
 import com.sendbird.calls.quickstart.utils.ToastUtils;
 
@@ -25,15 +25,7 @@ import java.util.Set;
 
 public class VideoCallActivity extends CallActivity {
 
-    private static final String TAG = "VideoCallActivity";
-
-    private static final String[] MANDATORY_PERMISSIONS = {
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.CAMERA
-    };
-
-    private boolean mIsVideoEnabled = true;
-    private boolean mIsMyVideoStopped;
+    private boolean mIsVideoEnabled;
 
     //+ Views
     private SendBirdVideoView mVideoViewFullScreen;
@@ -50,14 +42,9 @@ public class VideoCallActivity extends CallActivity {
     }
 
     @Override
-    protected String[] getMandatoryPermissions() {
-        return MANDATORY_PERMISSIONS;
-    }
-
-    @Override
     protected void initViews() {
         super.initViews();
-        Log.d(TAG, "initViews()");
+        Log.i(BaseApplication.TAG, "[VideoCallActivity] initViews()");
 
         mVideoViewFullScreen = findViewById(R.id.video_view_fullscreen);
         mViewConnectingVideoViewFullScreenFg = findViewById(R.id.view_connecting_video_view_fullscreen_fg);
@@ -71,26 +58,49 @@ public class VideoCallActivity extends CallActivity {
     protected void setViews() {
         super.setViews();
 
+        mVideoViewFullScreen.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
+        mVideoViewFullScreen.setZOrderMediaOverlay(false);
+        mVideoViewFullScreen.setEnableHardwareScaler(true);
+
+        mVideoViewSmall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
+        mVideoViewSmall.setZOrderMediaOverlay(true);
+        mVideoViewSmall.setEnableHardwareScaler(true);
+
+        if (mDirectCall != null) {
+            if (mDirectCall.getMyRole() == DirectCallUserRole.CALLER && mState == STATE.STATE_OUTGOING) {
+                mDirectCall.setLocalVideoView(mVideoViewFullScreen);
+                mDirectCall.setRemoteVideoView(mVideoViewSmall);
+            } else {
+                mDirectCall.setLocalVideoView(mVideoViewSmall);
+                mDirectCall.setRemoteVideoView(mVideoViewFullScreen);
+            }
+        }
+
         mImageViewCameraSwitch.setOnClickListener(view -> {
             if (mDirectCall != null) {
                 mDirectCall.switchCamera(e -> {
                     if (e != null) {
-                        Log.d(TAG, "switchCamera(e: " + e.getMessage() + ")");
+                        Log.i(BaseApplication.TAG, "[VideoCallActivity] switchCamera(e: " + e.getMessage() + ")");
                     }
                 });
             }
         });
 
+        if (mDirectCall != null && !mDoLocalVideoStart) {
+            mIsVideoEnabled = mDirectCall.isLocalVideoEnabled();
+        } else {
+            mIsVideoEnabled = true;
+        }
         mImageViewVideoOff.setSelected(!mIsVideoEnabled);
         mImageViewVideoOff.setOnClickListener(view -> {
             if (mDirectCall != null) {
                 if (mIsVideoEnabled) {
-                    Log.d(TAG, "stopVideo()");
+                    Log.i(BaseApplication.TAG, "[VideoCallActivity] stopVideo()");
                     mDirectCall.stopVideo();
                     mIsVideoEnabled = false;
                     mImageViewVideoOff.setSelected(true);
                 } else {
-                    Log.d(TAG, "startVideo()");
+                    Log.i(BaseApplication.TAG, "[VideoCallActivity] startVideo()");
                     mDirectCall.startVideo();
                     mIsVideoEnabled = true;
                     mImageViewVideoOff.setSelected(false);
@@ -119,8 +129,14 @@ public class VideoCallActivity extends CallActivity {
         });
     }
 
+    protected void setLocalVideoSettings(DirectCall call) {
+        mIsVideoEnabled = call.isLocalVideoEnabled();
+        Log.i(BaseApplication.TAG, "[VideoCallActivity] setLocalVideoSettings() => isLocalVideoEnabled(): " + mIsVideoEnabled);
+        mImageViewVideoOff.setSelected(!mIsVideoEnabled);
+    }
+
     @Override
-    protected void audioDeviceChanged(DirectCall call, AudioDevice currentAudioDevice, Set<AudioDevice> availableAudioDevices) {
+    protected void setAudioDevice(AudioDevice currentAudioDevice, Set<AudioDevice> availableAudioDevices) {
         if (currentAudioDevice == AudioDevice.SPEAKERPHONE) {
             mImageViewBluetooth.setSelected(false);
         } else if (currentAudioDevice == AudioDevice.BLUETOOTH) {
@@ -137,16 +153,6 @@ public class VideoCallActivity extends CallActivity {
     @Override
     protected void startCall(boolean amICallee) {
         CallOptions callOptions = new CallOptions();
-        callOptions.setAudioEnabled(mIsAudioEnabled);
-
-        mVideoViewFullScreen.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
-        mVideoViewFullScreen.setZOrderMediaOverlay(false);
-        mVideoViewFullScreen.setEnableHardwareScaler(true);
-
-        mVideoViewSmall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
-        mVideoViewSmall.setZOrderMediaOverlay(true);
-        mVideoViewSmall.setEnableHardwareScaler(true);
-
         callOptions.setVideoEnabled(mIsVideoEnabled).setAudioEnabled(mIsAudioEnabled);
 
         if (amICallee) {
@@ -156,15 +162,15 @@ public class VideoCallActivity extends CallActivity {
         }
 
         if (amICallee) {
-            Log.d(TAG, "accept()");
+            Log.i(BaseApplication.TAG, "[VideoCallActivity] accept()");
             if (mDirectCall != null) {
                 mDirectCall.accept(new AcceptParams().setCallOptions(callOptions));
             }
         } else {
-            Log.d(TAG, "dial()");
-            mDirectCall = SendBirdCall.dial(new DialParams(mCalleeId).setVideoCall(mIsVideoCall).setCallOptions(callOptions), (call, e) -> {
+            Log.i(BaseApplication.TAG, "[VideoCallActivity] dial()");
+            mDirectCall = SendBirdCall.dial(new DialParams(mCalleeIdToDial).setVideoCall(mIsVideoCall).setCallOptions(callOptions), (call, e) -> {
                 if (e != null) {
-                    Log.d(TAG, "dial() => e: " + e.getMessage());
+                    Log.i(BaseApplication.TAG, "[VideoCallActivity] dial() => e: " + e.getMessage());
                     if (e.getMessage() != null) {
                         ToastUtils.showToast(mContext, e.getMessage());
                     }
@@ -173,15 +179,11 @@ public class VideoCallActivity extends CallActivity {
                     return;
                 }
 
-                Log.d(TAG, "dial() => OK");
-                if (mDirectCall != null) {
-                    CallService.startService(mContext, mDirectCall, false);
-                }
+                Log.i(BaseApplication.TAG, "[VideoCallActivity] dial() => OK");
+                updateCallService();
             });
 
-            if (mDirectCall != null) {
-                setListener(mDirectCall);
-            }
+            setListener(mDirectCall);
         }
     }
 
@@ -194,7 +196,7 @@ public class VideoCallActivity extends CallActivity {
         }
 
         switch (state) {
-            case STATE_INCOMING: {
+            case STATE_ACCEPTING: {
                 mVideoViewFullScreen.setVisibility(View.GONE);
                 mViewConnectingVideoViewFullScreenFg.setVisibility(View.GONE);
                 mRelativeLayoutVideoViewSmall.setVisibility(View.GONE);
@@ -221,13 +223,16 @@ public class VideoCallActivity extends CallActivity {
                 mLinearLayoutInfo.setVisibility(View.GONE);
 
                 if (call != null && call.getMyRole() == DirectCallUserRole.CALLER) {
-                    call.setRemoteVideoView(mVideoViewFullScreen);
                     call.setLocalVideoView(mVideoViewSmall);
+                    call.setRemoteVideoView(mVideoViewFullScreen);
                 }
                 break;
             }
 
+            case STATE_ENDING:
             case STATE_ENDED: {
+                mLinearLayoutInfo.setVisibility(View.VISIBLE);
+
                 mVideoViewFullScreen.setVisibility(View.GONE);
                 mViewConnectingVideoViewFullScreenFg.setVisibility(View.GONE);
                 mRelativeLayoutVideoViewSmall.setVisibility(View.GONE);
@@ -239,24 +244,26 @@ public class VideoCallActivity extends CallActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume()");
+    protected void onStart() {
+        super.onStart();
+        Log.i(BaseApplication.TAG, "[VideoCallActivity] onStart()");
 
-        if (mDirectCall != null && mIsMyVideoStopped) {
-            mIsMyVideoStopped = false;
+        if (mDirectCall != null && mDoLocalVideoStart) {
+            mDoLocalVideoStart = false;
+            updateCallService();
             mDirectCall.startVideo();
         }
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause()");
+    protected void onStop() {
+        super.onStop();
+        Log.i(BaseApplication.TAG, "[VideoCallActivity] onStop()");
 
         if (mDirectCall != null && mDirectCall.isLocalVideoEnabled()) {
             mDirectCall.stopVideo();
-            mIsMyVideoStopped = true;
+            mDoLocalVideoStart = true;
+            updateCallService();
         }
     }
 }
