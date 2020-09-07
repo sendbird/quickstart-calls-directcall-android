@@ -70,7 +70,9 @@ For more detail on how to build and run an Android application, refer to [Androi
 
 <br />
 
-## Making a call
+## Making your first call
+
+### How to make a call
 
 1. Log in to the sample application on the primary device with the user ID set as the `caller`.
 2. Log in to the sample application on the secondary device using the ID of the user set as the `callee`. Alternatively, you can also use the Calls widget found on the Calls dashboard to log in as the `callee`.
