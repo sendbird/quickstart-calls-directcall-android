@@ -8,7 +8,7 @@ Sendbird Calls SDK for Android is used to initialize, configure, and build voice
 
 ### More about Sendbird Calls for Android
 
-Find out more about Sendbird Calls for Anroid on [Calls for Android doc](https://docs.sendbird.com/android/calls_quick_start). If you need any help in resolving any issues or have questions, visit [our community](https://community.sendbird.com).
+Find out more about Sendbird Calls for Android on [Calls for Android doc](https://docs.sendbird.com/android/calls_quick_start). If you need any help in resolving any issues or have questions, visit [our community](https://community.sendbird.com).
 
 <br />
 
