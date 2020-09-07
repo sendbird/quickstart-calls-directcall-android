@@ -143,4 +143,4 @@ protected void onCreate(Bundle savedInstanceState) {
 
 ## Reference
 
-For further detail on Sendbird Calls for Android, refer to [Sendbird Calls SDK for Android Readme](https://github.com/sendbird/sendbird-calls-android/blob/master/README.md).
+For further detail on Sendbird Calls for Android, refer to [Sendbird Calls SDK for Android README](https://github.com/sendbird/sendbird-calls-android/blob/master/README.md).
