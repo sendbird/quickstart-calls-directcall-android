@@ -3,7 +3,7 @@
 ![Languages](https://img.shields.io/badge/language-JAVA-orange.svg)
 
 [![Download:
-Google Play](https://lh3.googleusercontent.com/cjsqrWQKJQp9RFO7-hJ9AfpKzbUb_Y84vXfjlP0iRHBvladwAfXih984olktDhPnFqyZ0nu9A5jvFwOEQPXzv7hr3ce3QVsLN8kQ2Ao=s0)](https://play.google.com/store/apps/details?id=com.sendbird.calls.quickstart)
+Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.sendbird.calls.quickstart)
 
 ## Introduction
 
