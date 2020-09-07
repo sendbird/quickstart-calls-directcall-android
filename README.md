@@ -2,6 +2,9 @@
 ![Platform](https://img.shields.io/badge/platform-ANDROID-orange.svg)
 ![Languages](https://img.shields.io/badge/language-JAVA-orange.svg)
 
+[![Download:
+Google Play](https://lh3.googleusercontent.com/cjsqrWQKJQp9RFO7-hJ9AfpKzbUb_Y84vXfjlP0iRHBvladwAfXih984olktDhPnFqyZ0nu9A5jvFwOEQPXzv7hr3ce3QVsLN8kQ2Ao=s0)](https://play.google.com/store/apps/details?id=com.sendbird.calls.quickstart)
+
 ## Introduction
 
 Sendbird Calls SDK for Android is used to initialize, configure, and build voice and video calling functionality into your Android client app. In this repository, you will find the steps you need to take before implementing the Calls SDK into a project, and a sample app which contains the code for implementing voice and video call. 
