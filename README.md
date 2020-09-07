@@ -4,7 +4,7 @@
 
 ## Introduction
 
-**Sendbird Calls** enables real-time VoIP communication between app users. In this repository, you will find the steps you need to take before implementing the Calls SDK into a project, and a sample app which contains the SDK for implementing voice and video call. 
+Sendbird Calls SDK for Android is used to initialize, configure, and build voice and video calling functionality into your Android client app. In this repository, you will find the steps you need to take before implementing the Calls SDK into a project, and a sample app which contains the code for implementing voice and video call. 
 
 ### More about Sendbird Calls for Android
 
