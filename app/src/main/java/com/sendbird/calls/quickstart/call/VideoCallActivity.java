@@ -182,7 +182,6 @@ public class VideoCallActivity extends CallActivity {
                 Log.i(BaseApplication.TAG, "[VideoCallActivity] dial() => OK");
                 updateCallService();
             });
-
             setListener(mDirectCall);
         }
     }

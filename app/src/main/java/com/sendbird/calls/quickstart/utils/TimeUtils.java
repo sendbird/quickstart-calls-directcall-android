@@ -53,7 +53,7 @@ public class TimeUtils {
     }
 
     public static String getDateString(long timeMs) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "yyyy/MM/dd h:mma", Locale.getDefault());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "yyyy/MM/dd H:mm", Locale.getDefault());
         String dateString = simpleDateFormat.format(new Date(timeMs));
         return dateString.toLowerCase();
     }

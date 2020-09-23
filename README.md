@@ -1,4 +1,5 @@
 # Sendbird Calls for Android Quickstart
+
 ![Platform](https://img.shields.io/badge/platform-ANDROID-orange.svg)
 ![Languages](https://img.shields.io/badge/language-JAVA-orange.svg)
 
@@ -7,7 +8,7 @@ Google Play](https://lh3.googleusercontent.com/cjsqrWQKJQp9RFO7-hJ9AfpKzbUb_Y84v
 
 ## Introduction
 
-Sendbird Calls SDK for Android is used to initialize, configure, and build voice and video calling functionality into your Android client app. In this repository, you will find the steps you need to take before implementing the Calls SDK into a project, and a sample app which contains the code for implementing voice and video call. 
+Sendbird Calls SDK for Android is used to initialize, configure, and build voice and video calling functionality into your Android client app. In this repository, you will find the steps you need to take before implementing the Calls SDK into a project, and a sample app which contains the code for implementing voice and video call.
 
 ### More about Sendbird Calls for Android
 
@@ -21,7 +22,7 @@ This section shows you the prerequisites you need for testing Sendbird Calls for
 
 ### Requirements
 
-The minimum requirements for Calls SDK for Android sample are: 
+The minimum requirements for Calls SDK for Android sample are:
 
 - Android 4.1 (API level 16) or higher
 - Java 8 or higher
@@ -34,7 +35,7 @@ For more details on **installing and configuring the Calls SDK for Android**, re
 
 ## Getting started
 
-If you would like to try the sample app specifically fit to your usage, you can do so by following the steps below. 
+If you would like to try the sample app specifically fit to your usage, you can do so by following the steps below.
 
 ### Create a Sendbird application
 
@@ -65,9 +66,9 @@ public class BaseApplication extends Application {
 
 ### Build and run the sample app
 
-1. Build and run the sample app on your Android device. 
-2. Install the application onto at least two separate devices for each test user you created earlier. 
-3. If there are no two devices available, you can use an emulator to run the application instead. 
+1. Build and run the sample app on your Android device.
+2. Install the application onto at least two separate devices for each test user you created earlier.
+3. If there are no two devices available, you can use an emulator to run the application instead.
 
 For more detail on how to build and run an Android application, refer to [Android Documentation](https://developer.android.com/studio/run).
 
@@ -142,6 +143,25 @@ protected void onCreate(Bundle savedInstanceState) {
                       android:layout_height="match_parent" />
                 ...
 </RelativeLayout>
+```
+
+<br />
+
+### Sound Effects
+
+You can use different sound effects to enhance the user experience for events that take place while using Sendbird Calls.
+
+To add sound effects, use the `SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType soundType, int resId)` method for the following events: dialing, ringing, reconnecting, and reconnected. Remember to set sound effects before the mentioned events occur. To remove sound effects, use the `SendBirdCall.Options.removeDirectCallSound(SendBirdCall.SoundType soundType)` method.
+
+```java
+// Play on a caller’s side when making a call.
+SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.DIALING, R.raw.dialing);
+// Play on a callee’s side when receiving a call.
+SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RINGING, R.raw.ringing);
+// Play when a connection is lost, but the SDK immediately attempts to reconnect.
+SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTING, R.raw.reconnecting);
+// Play when the connection is re-established.
+SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTED, R.raw.reconnected);
 ```
 
 <br />

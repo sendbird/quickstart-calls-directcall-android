@@ -2,43 +2,43 @@
     <string name="calls_app_name">Sendbird Calls</string>
     <string name="calls_quickstart_version">Quickstart %s</string>
     <string name="calls_sdk_version">SDK %s</string>
-    <string name="calls_sign_in_with_qrcode">SIGN IN WITH QR CODE</string>
-    <string name="calls_scanning_a_qrcode_description">Sign in by scanning a QR code found in the Calls Studio of the Sendbird Dashboard</string>
+    <string name="calls_sign_in_with_qrcode">Sign in with QR code</string>
+    <string name="calls_scanning_a_qrcode_description">Scan QR code from Calls studio on Sendbird dashboard.</string>
     <string name="calls_or">Or</string>
-    <string name="calls_sign_in_manually">SIGN IN MANUALLY</string>
-    <string name="calls_sign_in_manually_title">Sign in manually</string>
-    <string name="calls_app_id">App ID</string>
+    <string name="calls_sign_in_manually">Sign in with ID</string>
+    <string name="calls_sign_in_manually_title">Sign in</string>
+    <string name="calls_app_id">Application ID</string>
     <string name="calls_user_id">User ID</string>
-    <string name="calls_access_token">User access token (Optional)</string>
-    <string name="calls_sign_in">SIGN IN</string>
+    <string name="calls_access_token">Access token (optional)</string>
+    <string name="calls_sign_in">Sign in</string>
 
     <string name="calls_empty_nickname">—</string>
     <string name="calls_user_id_format">User ID: %s</string>
     <string name="calls_and_character">" · "</string>
 
-    <string name="calls_notification_voice_calling_content">Voice calling from %s</string>
-    <string name="calls_notification_video_calling_content">Video calling from %s</string>
+    <string name="calls_notification_voice_calling_content">Voice call from %s</string>
+    <string name="calls_notification_video_calling_content">Video call from %s</string>
     <string name="calls_notification_accept">Accept</string>
     <string name="calls_notification_decline">Decline</string>
     <string name="calls_notification_end">End</string>
 
     <string name="calls_make_a_call">Make a call</string>
-    <string name="calls_make_a_call_description">Enter the user ID of the user you wish to call, then press one of the video or voice call buttons</string>
-    <string name="calls_history">History</string>
-    <string name="calls_no_call_history">No call history</string>
+    <string name="calls_history">Recents</string>
+    <string name="calls_no_call_history">No call history</string><!-- remove -->
     <string name="calls_settings">Settings</string>
     <string name="calls_application_information">Application information</string>
-    <string name="calls_application_id">Application ID</string>
+    <string name="calls_application_name">Name</string>
+    <string name="calls_application_id">ID</string>
     <string name="calls_sign_out">Sign out</string>
 
-    <string name="calls_muted_this_call">%s is on mute</string>
-    <string name="calls_incoming_voice_call">Incoming voice call&#8230;</string>
-    <string name="calls_incoming_video_call">Incoming video call&#8230;</string>
-    <string name="calls_connecting_call">Connecting&#8230;</string>
-    <string name="calls_calling">Calling&#8230;</string>
-    <string name="calls_video_calling">Video calling&#8230;</string>
-    <string name="calls_ending_voice_call">Ending voice call&#8230;</string>
-    <string name="calls_ending_video_call">Ending video call&#8230;</string>
+    <string name="calls_muted_this_call">%s is muted</string>
+    <string name="calls_incoming_voice_call">incoming voice call&#8230;</string>
+    <string name="calls_incoming_video_call">incoming video call&#8230;</string>
+    <string name="calls_connecting_call">connecting&#8230;</string>
+    <string name="calls_calling">making voice call&#8230;</string>
+    <string name="calls_video_calling">making video call&#8230;</string>
+    <string name="calls_ending_voice_call">voice call ending&#8230;</string>
+    <string name="calls_ending_video_call">video call ending&#8230;</string>
 
     <string name="calls_end_result_no_answer">No answer</string>
     <string name="calls_end_result_canceled">Canceled</string>
@@ -51,7 +51,9 @@
     <string name="calls_end_result_dial_failed">Dial failed</string>
     <string name="calls_end_result_other_device_accepted">Other device accepted</string>
 
-    <string name="calls_invalid_notifications_setting_in_dashboard">Mobile sign-in is not enabled. Please first enable notifications on the Sendbird Dashboard.</string>
-    <string name="calls_invalid_qrcode">This QR code is not valid. Please generate and scan a user-specific QR code in Calls studio.</string>
+    <string name="calls_invalid_notifications_setting_in_dashboard">Turn on notifications on the Sendbird dashboard to allow mobile sign in.</string>
+    <string name="calls_invalid_qrcode">This QR code is not valid. Go to Calls studio and try scanning your QR code again.</string>
+    <string name="calls_invalid_deep_link">Invalid deep link</string>
+    <string name="calls_deep_linking_to_authenticate_failed">Could not authenticate deep link.</string>
 
 </resources>

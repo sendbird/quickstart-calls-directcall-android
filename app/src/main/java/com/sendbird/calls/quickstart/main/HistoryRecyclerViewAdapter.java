@@ -15,6 +15,7 @@ import com.sendbird.calls.DirectCallUser;
 import com.sendbird.calls.DirectCallUserRole;
 import com.sendbird.calls.quickstart.R;
 import com.sendbird.calls.quickstart.call.CallService;
+import com.sendbird.calls.quickstart.utils.EndResultUtils;
 import com.sendbird.calls.quickstart.utils.ImageUtils;
 import com.sendbird.calls.quickstart.utils.TimeUtils;
 import com.sendbird.calls.quickstart.utils.UserInfoUtils;
@@ -81,7 +82,7 @@ class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerVie
 
         String endResult = "";
         if (callLog.getEndResult() != null) {
-            endResult = callLog.getEndResult().toString().toUpperCase();
+            endResult = EndResultUtils.getEndResultString(mContext, callLog.getEndResult());
         }
         String endResultAndDuration = endResult + mContext.getString(R.string.calls_and_character) + TimeUtils.getTimeStringForHistory(callLog.getDuration());
         holder.textViewEndResultAndDuration.setText(endResultAndDuration);

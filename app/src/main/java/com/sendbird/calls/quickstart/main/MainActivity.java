@@ -10,7 +10,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,7 +40,15 @@ public class MainActivity extends AppCompatActivity {
 
     private Context mContext;
 
+    private Toolbar mToolbar;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+
     private LinearLayout mLinearLayoutToolbar;
+    private ImageView mImageViewProfile;
+    private TextView mTextViewNickname;
+    private TextView mTextViewUserId;
+
     private MainPagerAdapter mMainPagerAdapter;
     private BroadcastReceiver mReceiver;
 
@@ -48,11 +58,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mContext = this;
-        mLinearLayoutToolbar = findViewById(R.id.linear_layout_toolbar);
 
         initViews();
+        setUI();
+
         registerReceiver();
         checkPermissions();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.i(BaseApplication.TAG, "[MainActivity] onNewIntent()");
+
+        setUI();
     }
 
     @Override
@@ -62,58 +81,66 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = findViewById(R.id.toolbar);
+        mTabLayout = findViewById(R.id.tab_layout);
+        mViewPager = findViewById(R.id.view_pager);
 
-        UserInfoUtils.setProfileImage(mContext, SendBirdCall.getCurrentUser(), findViewById(R.id.image_view_profile));
-        UserInfoUtils.setNickname(mContext, SendBirdCall.getCurrentUser(), findViewById(R.id.text_view_nickname));
-        UserInfoUtils.setUserId(mContext, SendBirdCall.getCurrentUser(), findViewById(R.id.text_view_user_id));
+        mLinearLayoutToolbar = findViewById(R.id.linear_layout_toolbar);
+        mImageViewProfile = findViewById(R.id.image_view_profile);
+        mTextViewNickname = findViewById(R.id.text_view_nickname);
+        mTextViewUserId = findViewById(R.id.text_view_user_id);
+    }
 
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
-        ViewPager viewPager = findViewById(R.id.view_pager);
+    private void setUI() {
+        setSupportActionBar(mToolbar);
 
-        mMainPagerAdapter = new MainPagerAdapter(mContext, getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(mMainPagerAdapter);
+        mLinearLayoutToolbar.setVisibility(View.VISIBLE);
+        UserInfoUtils.setProfileImage(mContext, SendBirdCall.getCurrentUser(), mImageViewProfile);
+        UserInfoUtils.setNickname(mContext, SendBirdCall.getCurrentUser(), mTextViewNickname);
+        UserInfoUtils.setUserId(mContext, SendBirdCall.getCurrentUser(), mTextViewUserId);
 
-        tabLayout.setupWithViewPager(viewPager);
+        mMainPagerAdapter = new MainPagerAdapter(mContext, getSupportFragmentManager(), mTabLayout.getTabCount());
+        mViewPager.setAdapter(mMainPagerAdapter);
+
+        mTabLayout.setupWithViewPager(mViewPager);
         int tabIndex = 0;
-        tabLayout.getTabAt(tabIndex).setIcon(R.drawable.ic_call_filled).setText(null);
+        mTabLayout.getTabAt(tabIndex).setIcon(R.drawable.ic_call_filled).setText(null);
         tabIndex++;
-        tabLayout.getTabAt(tabIndex).setIcon(R.drawable.ic_layout_default).setText(null);
+        mTabLayout.getTabAt(tabIndex).setIcon(R.drawable.ic_layout_default).setText(null);
         tabIndex++;
-        tabLayout.getTabAt(tabIndex).setIcon(R.drawable.ic_settings).setText(null);
+        mTabLayout.getTabAt(tabIndex).setIcon(R.drawable.ic_settings).setText(null);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(mMainPagerAdapter.getPageTitle(0));
+            getSupportActionBar().setTitle(mMainPagerAdapter.getPageTitle(mViewPager.getCurrentItem()));
         }
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
 
             @Override
             public void onPageSelected(int position) {
-                toolbar.setTitle(mMainPagerAdapter.getPageTitle(position));
+                mToolbar.setTitle(mMainPagerAdapter.getPageTitle(position));
 
                 switch (position) {
                     case 0:
                         mLinearLayoutToolbar.setVisibility(View.VISIBLE);
-                        tabLayout.getTabAt(0).setIcon(R.drawable.ic_call_filled);
-                        tabLayout.getTabAt(1).setIcon(R.drawable.ic_layout_default);
-                        tabLayout.getTabAt(2).setIcon(R.drawable.ic_settings);
+                        mTabLayout.getTabAt(0).setIcon(R.drawable.ic_call_filled);
+                        mTabLayout.getTabAt(1).setIcon(R.drawable.ic_layout_default);
+                        mTabLayout.getTabAt(2).setIcon(R.drawable.ic_settings);
                         break;
                     case 1:
                         mLinearLayoutToolbar.setVisibility(View.GONE);
-                        tabLayout.getTabAt(0).setIcon(R.drawable.ic_call);
-                        tabLayout.getTabAt(1).setIcon(R.drawable.icon_call_history);
-                        tabLayout.getTabAt(2).setIcon(R.drawable.ic_settings);
+                        mTabLayout.getTabAt(0).setIcon(R.drawable.ic_call);
+                        mTabLayout.getTabAt(1).setIcon(R.drawable.icon_call_history);
+                        mTabLayout.getTabAt(2).setIcon(R.drawable.ic_settings);
                         break;
                     case 2:
                         mLinearLayoutToolbar.setVisibility(View.GONE);
-                        tabLayout.getTabAt(0).setIcon(R.drawable.ic_call);
-                        tabLayout.getTabAt(1).setIcon(R.drawable.ic_layout_default);
-                        tabLayout.getTabAt(2).setIcon(R.drawable.icon_settings_filled);
+                        mTabLayout.getTabAt(0).setIcon(R.drawable.ic_call);
+                        mTabLayout.getTabAt(1).setIcon(R.drawable.ic_layout_default);
+                        mTabLayout.getTabAt(2).setIcon(R.drawable.icon_settings_filled);
                         break;
                 }
             }

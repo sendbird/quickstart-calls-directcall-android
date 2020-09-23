@@ -137,7 +137,6 @@ public class VoiceCallActivity extends CallActivity {
                 Log.i(BaseApplication.TAG, "[VoiceCallActivity] dial() => OK");
                 updateCallService();
             });
-
             setListener(mDirectCall);
         }
     }

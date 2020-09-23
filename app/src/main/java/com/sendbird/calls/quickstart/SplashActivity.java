@@ -1,13 +1,17 @@
 package com.sendbird.calls.quickstart;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sendbird.calls.quickstart.utils.ActivityUtils;
 import com.sendbird.calls.quickstart.utils.AuthenticationUtils;
+import com.sendbird.calls.quickstart.utils.ToastUtils;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -19,6 +23,7 @@ public class SplashActivity extends AppCompatActivity {
     private Context mContext;
     private Timer mTimer;
     private Boolean mAutoAuthenticateResult;
+    private String mEncodedAuthInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +33,30 @@ public class SplashActivity extends AppCompatActivity {
         mContext = this;
 
         setTimer();
-        autoAuthenticate();
+
+        if (!hasDeepLink()) {
+            autoAuthenticate();
+        }
+    }
+
+    private boolean hasDeepLink() {
+        boolean result = false;
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            Uri data = intent.getData();
+            if (data != null) {
+                String scheme = data.getScheme();
+                if (scheme != null && scheme.equals("sendbird")) {
+                    Log.i(BaseApplication.TAG, "[SplashActivity] deep link: " + data.toString());
+                    mEncodedAuthInfo = data.getHost();
+                    if (!TextUtils.isEmpty(mEncodedAuthInfo)) {
+                        result = true;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     private void setTimer() {
@@ -38,6 +66,23 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 runOnUiThread(() -> {
                     mTimer = null;
+
+                    if (!TextUtils.isEmpty(mEncodedAuthInfo)) {
+                        AuthenticationUtils.authenticateWithEncodedAuthInfo(SplashActivity.this, mEncodedAuthInfo, (isSuccess, hasInvalidValue) -> {
+                            if (isSuccess) {
+                                ActivityUtils.startMainActivityAndFinish(SplashActivity.this);
+                            } else {
+                                if (hasInvalidValue) {
+                                    ToastUtils.showToast(SplashActivity.this, getString(R.string.calls_invalid_deep_link));
+                                } else {
+                                    ToastUtils.showToast(SplashActivity.this, getString(R.string.calls_deep_linking_to_authenticate_failed));
+                                }
+                                finish();
+                            }
+                        });
+                        return;
+                    }
+
                     if (mAutoAuthenticateResult != null) {
                         if (mAutoAuthenticateResult) {
                             ActivityUtils.startMainActivityAndFinish(SplashActivity.this);

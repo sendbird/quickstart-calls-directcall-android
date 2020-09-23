@@ -27,6 +27,7 @@ import com.sendbird.calls.quickstart.BaseApplication;
 import com.sendbird.calls.quickstart.R;
 import com.sendbird.calls.quickstart.utils.AuthenticationUtils;
 import com.sendbird.calls.quickstart.utils.BroadcastUtils;
+import com.sendbird.calls.quickstart.utils.EndResultUtils;
 import com.sendbird.calls.quickstart.utils.UserInfoUtils;
 
 import java.util.Set;
@@ -370,7 +371,10 @@ public abstract class CallActivity extends AppCompatActivity {
                 mRelativeLayoutRingingButtons.setVisibility(View.GONE);
                 mLinearLayoutConnectingButtons.setVisibility(View.GONE);
 
-                String status = getEndResultString(call);
+                String status = "";
+                if (call != null) {
+                    status = EndResultUtils.getEndResultString(mContext, call.getEndResult());
+                }
                 setInfo(call, status);
                 finishWithEnding(status);
                 break;
@@ -407,47 +411,6 @@ public abstract class CallActivity extends AppCompatActivity {
         } else {
             mLinearLayoutRemoteMute.setVisibility(View.GONE);
         }
-    }
-
-    private String getEndResultString(DirectCall call) {
-        String endResultString = "";
-        if (call != null) {
-            switch (call.getEndResult()) {
-                case NONE:
-                    break;
-                case NO_ANSWER:
-                    endResultString = getString(R.string.calls_end_result_no_answer);
-                    break;
-                case CANCELED:
-                    endResultString = getString(R.string.calls_end_result_canceled);
-                    break;
-                case DECLINED:
-                    endResultString = getString(R.string.calls_end_result_declined);
-                    break;
-                case COMPLETED:
-                    endResultString = getString(R.string.calls_end_result_completed);
-                    break;
-                case TIMED_OUT:
-                    endResultString = getString(R.string.calls_end_result_timed_out);
-                    break;
-                case CONNECTION_LOST:
-                    endResultString = getString(R.string.calls_end_result_connection_lost);
-                    break;
-                case UNKNOWN:
-                    endResultString = getString(R.string.calls_end_result_unknown);
-                    break;
-                case DIAL_FAILED:
-                    endResultString = getString(R.string.calls_end_result_dial_failed);
-                    break;
-                case ACCEPT_FAILED:
-                    endResultString = getString(R.string.calls_end_result_accept_failed);
-                    break;
-                case OTHER_DEVICE_ACCEPTED:
-                    endResultString = getString(R.string.calls_end_result_other_device_accepted);
-                    break;
-            }
-        }
-        return endResultString;
     }
 
     @Override

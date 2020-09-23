@@ -19,18 +19,7 @@
         android:fontFamily="@font/roboto_medium"
         android:text="@string/calls_make_a_call"
         android:textColor="#e1000000"
-        android:textSize="24sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textSize="14sp"
-        android:textColor="#80000000"
-        android:lineSpacingExtra="6sp"
-        android:text="@string/calls_make_a_call_description"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="16dp"
+        android:textSize="24sp"
         android:layout_marginBottom="32dp" />
 
     <com.google.android.material.textfield.TextInputLayout

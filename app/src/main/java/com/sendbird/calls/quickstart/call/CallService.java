@@ -21,6 +21,7 @@ import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.quickstart.BaseApplication;
 import com.sendbird.calls.quickstart.R;
+import com.sendbird.calls.quickstart.utils.ToastUtils;
 import com.sendbird.calls.quickstart.utils.UserInfoUtils;
 
 public class CallService extends Service {
@@ -62,10 +63,6 @@ public class CallService extends Service {
         boolean doLocalVideoStart;
 
         ServiceData() {
-        }
-
-        ServiceData(ServiceData serviceData) {
-            set(serviceData);
         }
 
         void set(ServiceData serviceData) {
@@ -199,6 +196,12 @@ public class CallService extends Service {
     }
 
     public static void dial(Context context, String doDialWithCalleeId, boolean isVideoCall) {
+        if (SendBirdCall.getOngoingCallCount() > 0) {
+            ToastUtils.showToast(context, "Ringing.");
+            Log.i(BaseApplication.TAG, "[CallService] dial() => SendBirdCall.getOngoingCallCount(): " + SendBirdCall.getOngoingCallCount());
+            return;
+        }
+
         Log.i(BaseApplication.TAG, "[CallService] dial()");
 
         ServiceData serviceData = new ServiceData();
@@ -222,7 +225,7 @@ public class CallService extends Service {
 
         ServiceData serviceData = new ServiceData();
         serviceData.isHeadsUpNotification = true;
-        serviceData.remoteNicknameOrUserId = UserInfoUtils.getNicknameOrUserId(call.getCallee());
+        serviceData.remoteNicknameOrUserId = UserInfoUtils.getNicknameOrUserId(call.getRemoteUser());
         serviceData.callState = CallActivity.STATE.STATE_ACCEPTING;
         serviceData.callId = call.getCallId();
         serviceData.isVideoCall = call.isVideoCall();

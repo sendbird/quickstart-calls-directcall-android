@@ -1,10 +1,11 @@
 package com.sendbird.calls.quickstart;
 
 
-import android.app.Application;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.multidex.MultiDexApplication;
 
 import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.SendBirdCall;
@@ -16,9 +17,9 @@ import com.sendbird.calls.quickstart.utils.PrefUtils;
 
 import java.util.UUID;
 
-public class BaseApplication extends Application {
+public class BaseApplication extends MultiDexApplication { // multidex
 
-    public static final String VERSION = "1.2.0";
+    public static final String VERSION = "1.3.0";
 
     public static final String TAG = "SendBirdCalls";
 
@@ -75,6 +76,11 @@ public class BaseApplication extends Application {
                     CallService.onRinging(context, call);
                 }
             });
+
+            SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.DIALING, R.raw.dialing);
+            SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RINGING, R.raw.ringing);
+            SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTING, R.raw.reconnecting);
+            SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTED, R.raw.reconnected);
             return true;
         }
         return false;

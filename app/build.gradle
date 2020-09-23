@@ -7,8 +7,9 @@ android {
         applicationId "com.sendbird.calls.quickstart"
         minSdkVersion 16 // [Calls]
         targetSdkVersion 29
-        versionCode 7
-        versionName "1.2.0"
+        versionCode 8
+        versionName "1.3.0"
+        multiDexEnabled true // multidex
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -27,13 +28,14 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.aar'])
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.multidex:multidex:2.0.1' // multidex
 
-    implementation 'com.sendbird.sdk:sendbird-calls:1.2.0' // [Calls]
-    implementation 'com.google.firebase:firebase-core:17.4.4' // [Calls] FCM
-    implementation 'com.google.firebase:firebase-messaging:20.2.3' // [Calls] FCM
+    implementation 'com.sendbird.sdk:sendbird-calls:1.3.0' // [Calls]
+    implementation 'com.google.firebase:firebase-core:17.5.0' // [Calls] FCM
+    implementation 'com.google.firebase:firebase-messaging:20.2.4' // [Calls] FCM
     implementation 'com.github.bumptech.glide:glide:4.11.0'
 
     //+ [QRCode]
@@ -42,8 +44,8 @@ dependencies {
     //- [QRCode]
 
     testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
 
 apply plugin: 'com.google.gms.google-services' // [Calls] FCM
