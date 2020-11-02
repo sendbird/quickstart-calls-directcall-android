@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class BaseApplication extends MultiDexApplication { // multidex
 
-    public static final String VERSION = "1.3.0";
+    public static final String VERSION = "1.4.0";
 
     public static final String TAG = "SendBirdCalls";
 
