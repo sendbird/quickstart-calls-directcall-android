@@ -163,6 +163,12 @@ SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTING, R.r
 SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTED, R.raw.reconnected);
 ```
 
+To make the dialing sound play when the device is on silent or vibrate mode, use the method below.
+
+```java
+SendBirdCall.Options.setDirectCallDialingSoundOnWhenSilentOrVibrateMode(true)
+```
+
 <br />
 
 ## Reference
