@@ -27,7 +27,7 @@ The minimum requirements for Calls SDK for Android sample are:
 - Android 4.1 (API level 16) or higher
 - Java 8 or higher
 - Gradle 3.4.0 or higher
-- Calls SDK for Android 1.0.3 or higher
+- Calls SDK for Android 1.5.1 or higher
 
 For more details on **installing and configuring the Calls SDK for Android**, refer to [Calls for Android doc](https://sendbird.com/docs/calls/v1/android/getting-started/install-calls-sdk#2-step-2-install-the-calls-sdk).
 
