@@ -76,14 +76,14 @@ class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerVie
             }
         }
 
-        ImageUtils.displayCircularImageFromUrl(mContext, user.getProfileUrl(), holder.imageViewProfile);
+        if (user != null) {
+            ImageUtils.displayCircularImageFromUrl(mContext, user.getProfileUrl(), holder.imageViewProfile);
+        }
+
         UserInfoUtils.setNickname(mContext, user, holder.textViewNickname);
         UserInfoUtils.setUserId(mContext, user, holder.textViewUserId);
 
-        String endResult = "";
-        if (callLog.getEndResult() != null) {
-            endResult = EndResultUtils.getEndResultString(mContext, callLog.getEndResult());
-        }
+        String endResult = EndResultUtils.getEndResultString(mContext, callLog.getEndResult());
         String endResultAndDuration = endResult + mContext.getString(R.string.calls_and_character) + TimeUtils.getTimeStringForHistory(callLog.getDuration());
         holder.textViewEndResultAndDuration.setText(endResultAndDuration);
 
