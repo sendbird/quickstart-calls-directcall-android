@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.1"
     defaultConfig {
         applicationId "com.sendbird.calls.quickstart"
-        minSdkVersion 16 // [Calls]
-        targetSdkVersion 29
+        minSdkVersion 21 // [Calls]
+        targetSdkVersion 30
         versionCode 10
         versionName "1.7.0"
         multiDexEnabled true // multidex
@@ -33,7 +33,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.multidex:multidex:2.0.1' // multidex
 
-    implementation 'com.sendbird.sdk:sendbird-calls:1.7.0' // [Calls]
+    implementation 'com.sendbird.sdk:sendbird-calls:1.9.4-rc07' // [Calls]
 
     implementation 'com.google.firebase:firebase-core:17.5.0' // [Calls] FCM
     implementation 'com.google.firebase:firebase-messaging:20.2.4' // [Calls] FCM
