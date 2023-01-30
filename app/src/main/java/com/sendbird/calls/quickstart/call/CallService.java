@@ -170,11 +170,18 @@ public class CallService extends Service {
             }
         }
 
+        int pendingIntentFlag;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            pendingIntentFlag = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
+        } else {
+            pendingIntentFlag = PendingIntent.FLAG_UPDATE_CURRENT;
+        }
+
         Intent callIntent = getCallActivityIntent(mContext, serviceData, false);
-        PendingIntent callPendingIntent = PendingIntent.getActivity(mContext, (currentTime + 1), callIntent, 0);
+        PendingIntent callPendingIntent = PendingIntent.getActivity(mContext, (currentTime + 1), callIntent, pendingIntentFlag);
 
         Intent endIntent = getCallActivityIntent(mContext, serviceData, true);
-        PendingIntent endPendingIntent = PendingIntent.getActivity(mContext, (currentTime + 2), endIntent, 0);
+        PendingIntent endPendingIntent = PendingIntent.getActivity(mContext, (currentTime + 2), endIntent, pendingIntentFlag);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channelId);
         builder.setContentTitle(serviceData.remoteNicknameOrUserId)

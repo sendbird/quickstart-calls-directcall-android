@@ -29,12 +29,14 @@ import com.sendbird.calls.quickstart.utils.ToastUtils;
 import com.sendbird.calls.quickstart.utils.UserInfoUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String[] MANDATORY_PERMISSIONS = {
             Manifest.permission.RECORD_AUDIO,   // for VoiceCall and VideoCall
-            Manifest.permission.CAMERA          // for VideoCall
+            Manifest.permission.CAMERA,         // for VideoCall
+            Manifest.permission.BLUETOOTH       // for VoiceCall and VideoCall
     };
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
 
@@ -186,8 +188,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkPermissions() {
+        ArrayList<String> permissions = new ArrayList<>(Arrays.asList(MANDATORY_PERMISSIONS));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            permissions.add(Manifest.permission.BLUETOOTH_CONNECT);
+            permissions.add(Manifest.permission.BLUETOOTH_SCAN);
+        }
         ArrayList<String> deniedPermissions = new ArrayList<>();
-        for (String permission : MANDATORY_PERMISSIONS) {
+        for (String permission : permissions) {
             if (checkCallingOrSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
                 deniedPermissions.add(permission);
             }

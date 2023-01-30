@@ -1,12 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.1"
+    compileSdkVersion 33
     defaultConfig {
         applicationId "com.sendbird.calls.quickstart"
         minSdkVersion 21 // [Calls]
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 10
         versionName "1.7.0"
         multiDexEnabled true // multidex
