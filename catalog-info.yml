@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: quickstart-calls-directcall-android
+  description: Public sample repository for Sendbird calls directcall android
+  annotations:
+    github.com/project-slug: sendbird/quickstart-calls-directcall-android
+spec:
+  type: library
+  lifecycle: production
+  owner: dep-client-platform
+  system: sendbird-calls
+
