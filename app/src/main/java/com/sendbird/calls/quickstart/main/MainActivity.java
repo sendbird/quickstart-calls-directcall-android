@@ -193,6 +193,9 @@ public class MainActivity extends AppCompatActivity {
             permissions.add(Manifest.permission.BLUETOOTH_CONNECT);
             permissions.add(Manifest.permission.BLUETOOTH_SCAN);
         }
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.POST_NOTIFICATIONS);
+        }
         ArrayList<String> deniedPermissions = new ArrayList<>();
         for (String permission : permissions) {
             if (checkCallingOrSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {

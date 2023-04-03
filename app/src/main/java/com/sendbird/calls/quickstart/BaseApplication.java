@@ -5,9 +5,11 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.multidex.MultiDexApplication;
 
 import com.sendbird.calls.DirectCall;
+import com.sendbird.calls.RoomInvitation;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.handler.DirectCallListener;
 import com.sendbird.calls.handler.SendBirdCallListener;
@@ -45,6 +47,11 @@ public class BaseApplication extends MultiDexApplication { // multidex
         if (SendBirdCall.init(context, appId)) {
             SendBirdCall.removeAllListeners();
             SendBirdCall.addListener(UUID.randomUUID().toString(), new SendBirdCallListener() {
+                @Override
+                public void onInvitationReceived(@NonNull RoomInvitation roomInvitation) {
+                    Log.i(BaseApplication.TAG, "[BaseApplication] onInvitationReceived() => roomInvitation: " + roomInvitation.getRoomInvitationId());
+                }
+
                 @Override
                 public void onRinging(DirectCall call) {
                     int ongoingCallCount = SendBirdCall.getOngoingCallCount();
