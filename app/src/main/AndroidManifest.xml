@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.sendbird.calls.quickstart">
 
-    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" /> <!-- [QRCode] -->
+    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
+    <!-- [QRCode] -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -14,65 +15,67 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/calls_app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:hardwareAccelerated="true"> <!-- [QRCode] -->
-
-        <activity android:name=".SplashActivity"
+        android:theme="@style/AppTheme">
+        <!-- [QRCode] -->
+        <activity
+            android:name=".SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "sendbird://” -->
                 <data android:scheme="sendbird" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".AuthenticateActivity"
+        <activity
+            android:name=".AuthenticateActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".SignInManuallyActivity"
+        <activity
+            android:name=".SignInManuallyActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".main.MainActivity"
+        <activity
+            android:name=".main.MainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".main.ApplicationInformationActivity"
+        <activity
+            android:name=".main.ApplicationInformationActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-
         <activity
             android:name=".call.VideoCallActivity"
             android:configChanges="orientation|smallestScreenSize|screenSize|screenLayout"
-            android:theme="@style/CallTheme"
             android:screenOrientation="portrait"
+            android:theme="@style/CallTheme"
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".call.VoiceCallActivity"
             android:configChanges="orientation|smallestScreenSize|screenSize|screenLayout"
-            android:theme="@style/CallTheme"
             android:screenOrientation="portrait"
+            android:theme="@style/CallTheme"
             tools:ignore="LockedOrientationActivity" />
-        <service android:name=".call.CallService"
-            android:exported="true"
-            android:stopWithTask="false" />
 
-        <!-- [Calls] FCM -->
+        <service
+            android:name=".call.CallService"
+            android:exported="true"
+            android:stopWithTask="false" /> <!-- [Calls] FCM -->
         <service
             android:name=".fcm.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
-
-        <!-- [QRCode] -->
+        </service> <!-- [QRCode] -->
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
