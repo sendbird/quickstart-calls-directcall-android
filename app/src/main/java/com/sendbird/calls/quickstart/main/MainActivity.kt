@@ -134,6 +134,9 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissions.add(Manifest.permission.POST_NOTIFICATIONS)
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            permissions.add(Manifest.permission.USE_FULL_SCREEN_INTENT)
+        }
         val deniedPermissions = ArrayList<String>()
         for (permission in permissions) {
             if (checkCallingOrSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {

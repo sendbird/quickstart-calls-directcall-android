@@ -13,6 +13,8 @@ import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdCall.ongoingCallCount
 import com.sendbird.calls.quickstart.R
 import com.sendbird.calls.quickstart.TAG
+import com.sendbird.calls.quickstart.main.FullscreenNotificationActivity
+import com.sendbird.calls.quickstart.main.FullscreenNotificationActivity.Companion.getFullScreenNotificationActivityIntent
 import com.sendbird.calls.quickstart.utils.getNicknameOrUserId
 import com.sendbird.calls.quickstart.utils.showToast
 
@@ -106,7 +108,8 @@ class CallService : Service() {
         val callPendingIntent = PendingIntent.getActivity(this, currentTime + 1, callIntent, pendingIntentFlag)
         val endIntent = getCallActivityIntent(this, serviceData, true)
         val endPendingIntent = PendingIntent.getActivity(this, currentTime + 2, endIntent, pendingIntentFlag)
-
+        val fullScreenIntent = getFullScreenNotificationActivityIntent(applicationContext, serviceData)
+        val fullScreenPendingIntent = PendingIntent.getActivity(this, currentTime + 2, fullScreenIntent, pendingIntentFlag)
         val builder = NotificationCompat.Builder(this, channelId).apply {
             setContentTitle(serviceData.remoteNicknameOrUserId)
             setContentText(content)
@@ -118,6 +121,15 @@ class CallService : Service() {
                 if (serviceData.doAccept) {
                     addAction(NotificationCompat.Action(0,getString(R.string.calls_notification_decline),endPendingIntent))
                     addAction(NotificationCompat.Action(  0, getString(R.string.calls_notification_accept), callPendingIntent))
+
+                    // Use a full-screen intent only for the highest-priority alerts where you
+                    // have an associated activity that you would like to launch after the user
+                    // interacts with the notification. Also, if your app targets Android 10
+                    // or higher, you need to request the USE_FULL_SCREEN_INTENT permission in
+                    // order for the platform to invoke this notification.
+                    // The system UI may choose to display a heads-up notification, instead of launching this intent, while the user is using the device.
+                    // https://developer.android.com/reference/android/app/Notification.Builder#setFullScreenIntent(android.app.PendingIntent,%20boolean)
+                    setFullScreenIntent(fullScreenPendingIntent, true)
                 } else {
                     setContentIntent(callPendingIntent)
                     addAction(NotificationCompat.Action(0, getString(R.string.calls_notification_end), endPendingIntent))
