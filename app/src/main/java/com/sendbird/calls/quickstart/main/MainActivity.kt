@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
                 val callLog = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     intent.getSerializableExtra(INTENT_ACTION_ADD_CALL_LOG, DirectCallLog::class.java)
                 } else {
-                    intent.getSerializableExtra(INTENT_ACTION_ADD_CALL_LOG) as DirectCallLog
+                    intent.getSerializableExtra(INTENT_ACTION_ADD_CALL_LOG) as DirectCallLog?
                 }
                 if (callLog != null) {
                     val historyFragment = mMainPagerAdapter?.getItem(1) as HistoryFragment
