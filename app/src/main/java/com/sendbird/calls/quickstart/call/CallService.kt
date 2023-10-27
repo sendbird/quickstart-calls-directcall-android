@@ -113,6 +113,7 @@ class CallService : Service() {
         val builder = NotificationCompat.Builder(this, channelId).apply {
             setContentTitle(serviceData.remoteNicknameOrUserId)
             setContentText(content)
+            setOngoing(true)
             setSmallIcon(R.drawable.ic_sendbird)
             setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.icon_push_oreo))
             priority = NotificationCompat.PRIORITY_HIGH
