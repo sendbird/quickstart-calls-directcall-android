@@ -97,7 +97,7 @@ abstract class CallActivity : AppCompatActivity() {
         setCurrentState()
         if (mDoEnd) {
             Log.i(TAG, "[CallActivity] init() => (mDoEnd == true)")
-            end()
+            declineFromNotif()
             return
         }
         checkAuthentication()
@@ -134,6 +134,20 @@ abstract class CallActivity : AppCompatActivity() {
         mDoEnd = intent.getBooleanExtra(EXTRA_DO_END, false)
         if (mDoEnd) {
             Log.i(TAG, "[CallActivity] onNewIntent() => (mDoEnd == true)")
+            declineFromNotif()
+        }
+    }
+
+    private fun declineFromNotif() {
+        if (currentUser == null) {
+            autoAuthenticate(this) { userId ->
+                if (userId == null) {
+                    finishWithEnding("autoAuthenticate() failed.")
+                    return@autoAuthenticate
+                }
+                end()
+            }
+        } else {
             end()
         }
     }
