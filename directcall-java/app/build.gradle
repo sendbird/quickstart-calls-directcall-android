@@ -1,0 +1,52 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 33
+    defaultConfig {
+        applicationId "com.sendbird.calls.quickstart"
+        minSdkVersion 21 // [Calls]
+        targetSdkVersion 33
+        versionCode 10
+        versionName "1.7.0"
+        multiDexEnabled true // multidex
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // [Calls]
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    namespace 'com.sendbird.calls.quickstart'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.aar'])
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.multidex:multidex:2.0.1' // multidex
+
+    implementation 'com.sendbird.sdk:sendbird-calls:1.10.6' // [Calls]
+
+    implementation 'com.google.firebase:firebase-core:17.5.0' // [Calls] FCM
+    implementation 'com.google.firebase:firebase-messaging:20.2.4' // [Calls] FCM
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+
+    //+ [QRCode]
+    implementation('com.journeyapps:zxing-android-embedded:4.1.0') { transitive = false }
+    implementation 'com.google.zxing:core:3.3.0'
+    //- [QRCode]
+
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+apply plugin: 'com.google.gms.google-services' // [Calls] FCM

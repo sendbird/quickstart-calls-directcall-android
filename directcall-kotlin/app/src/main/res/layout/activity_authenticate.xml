@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context="com.sendbird.calls.quickstart.AuthenticateActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="56dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_logo_symbol"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_medium"
+            android:text="@string/calls_app_name"
+            android:textColor="#e1000000"
+            android:textSize="24sp"
+            android:layout_marginBottom="40dp" />
+
+        <RelativeLayout
+            android:id="@+id/relative_layout_sign_in_with_qrcode"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:background="@drawable/selector_sign_in_with_qrcode_relative_layout_bg">
+
+            <TextView
+                android:id="@+id/text_view_sign_in_with_qrcode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@drawable/selector_sign_in_with_qrcode_text_view_text"
+                android:letterSpacing="0.03"
+                android:lineSpacingExtra="2sp"
+                android:text="@string/calls_sign_in_with_qrcode"
+                android:duplicateParentState="true" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="#1e000000" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:textSize="12sp"
+                android:textColor="#80000000"
+                android:lineSpacingExtra="0sp"
+                android:text="@string/calls_or"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="#1e000000" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/relative_layout_sign_in_manually"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:background="@drawable/selector_sign_in_manually_relative_layout_bg">
+
+            <TextView
+                android:id="@+id/text_view_sign_in_manually"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@drawable/selector_sign_in_manually_text_view_text"
+                android:letterSpacing="0.03"
+                android:lineSpacingExtra="2sp"
+                android:text="@string/calls_sign_in_manually"
+                android:duplicateParentState="true" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/text_view_quickstart_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#80000000"
+            android:lineSpacingExtra="0sp"
+            android:layout_marginRight="16dp" />
+
+        <TextView
+            android:id="@+id/text_view_sdk_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#80000000"
+            android:lineSpacingExtra="0sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

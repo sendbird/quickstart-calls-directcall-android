@@ -1,7 +1,7 @@
 # Sendbird Calls for Android Quickstart
 
 ![Platform](https://img.shields.io/badge/platform-ANDROID-orange.svg)
-![Languages](https://img.shields.io/badge/language-kotlin-orange.svg)
+![Languages](https://img.shields.io/badge/language-JAVA-orange.svg)
 
 [![Download:
 Google Play](https://lh3.googleusercontent.com/cjsqrWQKJQp9RFO7-hJ9AfpKzbUb_Y84vXfjlP0iRHBvladwAfXih984olktDhPnFqyZ0nu9A5jvFwOEQPXzv7hr3ce3QVsLN8kQ2Ao=s0)](https://play.google.com/store/apps/details?id=com.sendbird.calls.quickstart)
@@ -97,33 +97,35 @@ You can create how the current user’s local video view will show on the screen
 3. Get the `SendBirdVideoView` object from the `xml` file of your call activity to add a local video view.
 4. Call the `DirectCall.setLocalVideoView()` method by using the `SendBirdVideoView` object within the call activity class.
 
-```kotlin
-// {YourApplication}.kt
-SendBirdCall.addListener("${UUID.randomUUID()}", object : SendBirdCallListener() {
-                override fun onInvitationReceived(invitation: RoomInvitation) {}
-
-                override fun onRinging(call: DirectCall) {
-                    ...
-
-                    val intent = Intent(applicationContext, YourCallActivity::class.java)
-                    intent.putExtra("EXTRA_INCOMING_CALL_ID", call.getCallId())
-                    ...
-
-                    applicationContext.startActivity(intent)
-                }
-            })
-
-// {YourCallActivity}.kt
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+```java
+// {YourApplication}.java
+SendBirdCall.addListener(UUID.randomUUID().toString(), new SendBirdCallListener() {
+    @Override
+    public void onRinging(DirectCall call) {
         ...
+        
+        Intent intent = new Intent(context, YourCallActivity.class);
+        intent.putExtra("EXTRA_INCOMING_CALL_ID", call.getCallId());
+        ...
+        
+        getApplicationContext().startActivity(intent);
+    }
+});
 
-    val callId = intent.getStringExtra("EXTRA_INCOMING_CALL_ID")
-    val call = SendBirdCall.getCall(callId)
+// {YourCallActivity}.java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
     ...
     
-    val localVideoView = findViewById(R.id.video_view_fullscreen)
-    call.setLocalVideoView(localVideoView)
+    String callId = getIntent().getStringExtra("EXTRA_INCOMING_CALL_ID");
+    DirectCall call = SendBirdCall.getCall(callId);
+    ...
+    
+    SendBirdVideoView localVideoView = findViewById(R.id.video_view_fullscreen);
+    call.setLocalVideoView(localVideoView);
+    ...
+    
 }
 ```
 
@@ -150,20 +152,20 @@ You can use different sound effects to enhance the user experience for events th
 
 To add sound effects, use the `SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType soundType, int resId)` method for the following events: dialing, ringing, reconnecting, and reconnected. Remember to set sound effects before the mentioned events occur. To remove sound effects, use the `SendBirdCall.Options.removeDirectCallSound(SendBirdCall.SoundType soundType)` method.
 
-```kotlin
+```java
 // Play on a caller’s side when making a call.
-SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.DIALING, R.raw.dialing)
+SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.DIALING, R.raw.dialing);
 // Play on a callee’s side when receiving a call.
-SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RINGING, R.raw.ringing)
+SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RINGING, R.raw.ringing);
 // Play when a connection is lost, but the SDK immediately attempts to reconnect.
-SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTING, R.raw.reconnecting)
+SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTING, R.raw.reconnecting);
 // Play when the connection is re-established.
-SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTED, R.raw.reconnected)
+SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTED, R.raw.reconnected);
 ```
 
 To make the dialing sound play when the device is on silent or vibrate mode, use the method below.
 
-```kotlin
+```java
 SendBirdCall.Options.setDirectCallDialingSoundOnWhenSilentOrVibrateMode(true)
 ```
 
