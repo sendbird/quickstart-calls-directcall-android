@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context="com.sendbird.calls.quickstart.main.DialFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/roboto_medium"
+        android:text="@string/calls_make_a_call"
+        android:textColor="#e1000000"
+        android:textSize="24sp"
+        android:layout_marginBottom="32dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColorHint="#61000000"
+        app:hintTextColor="#61000000"
+        app:boxBackgroundColor="#f0f0f0">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/text_input_edit_text_user_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:hint="@string/calls_user_id"
+            android:imeOptions="actionDone"
+            android:singleLine="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp">
+
+        <ImageView
+            android:id="@+id/image_view_video_call"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/selector_video_call_image_view"
+            android:layout_marginRight="32dp" />
+
+        <ImageView
+            android:id="@+id/image_view_voice_call"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/selector_voice_call_image_view" />
+
+    </LinearLayout>
+
+</LinearLayout>
