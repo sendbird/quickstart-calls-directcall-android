@@ -56,4 +56,8 @@
     <string name="calls_invalid_deep_link">Invalid deep link</string>
     <string name="calls_deep_linking_to_authenticate_failed">Could not authenticate deep link.</string>
 
+    <string name="calls_network_indicator_state_excellent">Excellent</string>
+    <string name="calls_network_indicator_state_average">Average</string>
+    <string name="calls_network_indicator_state_poor">Poor</string>
+
 </resources>

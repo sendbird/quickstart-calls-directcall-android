@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -16,8 +17,12 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
 import com.sendbird.calls.AudioDevice
+import com.sendbird.calls.ConnectionQualityMonitoringMode
+import com.sendbird.calls.ConnectionQualityState
 import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdCall.currentUser
 import com.sendbird.calls.SendBirdCall.getCall
@@ -66,6 +71,9 @@ abstract class CallActivity : AppCompatActivity() {
     abstract val mImageViewAudioOff: ImageView
     abstract val mImageViewBluetooth: ImageView
     abstract val mImageViewEnd: ImageView
+    abstract val mConstraintLayoutNetworkIndicator: ConstraintLayout
+    abstract val mImageViewNetworkIndicator: ImageView
+    abstract val mTextViewNetworkIndicator: TextView
     // endregion
 
     protected abstract fun setAudioDevice(currentAudioDevice: AudioDevice?, availableAudioDevices: Set<AudioDevice>?)
@@ -205,6 +213,9 @@ abstract class CallActivity : AppCompatActivity() {
                 setAudioDevice(currentAudioDevice, availableAudioDevices)
             }
         })
+        call?.setConnectionQualityListener(ConnectionQualityMonitoringMode.CONNECTION_QUALITY_CHANGE) { connectionMetrics ->
+            updateNetworkIndicatorState(connectionMetrics.connectionQualityState)
+        }
     }
 
     private fun checkAuthentication() {
@@ -292,6 +303,21 @@ abstract class CallActivity : AppCompatActivity() {
             else -> {}
         }
         return true
+    }
+
+    private fun updateNetworkIndicatorState(state: ConnectionQualityState) {
+        val (stateName, stateTint) = when (state) {
+            ConnectionQualityState.UNAVAILABLE -> {
+                mConstraintLayoutNetworkIndicator.visibility = View.GONE
+                return
+            }
+            ConnectionQualityState.POOR, ConnectionQualityState.FAIR -> Pair(getString(R.string.calls_network_indicator_state_poor), R.color.colorPoor)
+            ConnectionQualityState.AVERAGE -> Pair(getString(R.string.calls_network_indicator_state_average), R.color.colorAverage)
+            ConnectionQualityState.GOOD, ConnectionQualityState.EXCELLENT -> Pair(getString(R.string.calls_network_indicator_state_excellent), R.color.colorExcellent)
+        }
+        mConstraintLayoutNetworkIndicator.visibility = View.VISIBLE
+        mTextViewNetworkIndicator.text = stateName
+        mImageViewNetworkIndicator.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, stateTint))
     }
 
     protected fun setInfo(call: DirectCall?, status: String?) {
