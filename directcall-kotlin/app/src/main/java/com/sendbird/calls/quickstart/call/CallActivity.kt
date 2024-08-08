@@ -95,12 +95,15 @@ abstract class CallActivity : AppCompatActivity() {
         setViews()
         setAudioDevice()
         setCurrentState()
-        if (mDoEnd) {
-            Log.i(TAG, "[CallActivity] init() => (mDoEnd == true)")
-            end()
-            return
+        checkAuthentication { isAuthenticated ->
+            if (!isAuthenticated) return@checkAuthentication
+            if (mDoEnd) {
+                Log.i(TAG, "[CallActivity] init() => (mDoEnd == true)")
+                end()
+            } else {
+                ready()
+            }
         }
-        checkAuthentication()
     }
 
     private fun init() {
@@ -207,17 +210,18 @@ abstract class CallActivity : AppCompatActivity() {
         })
     }
 
-    private fun checkAuthentication() {
-        if (currentUser == null) {
-            autoAuthenticate(this) { userId ->
-                if (userId == null) {
-                    finishWithEnding("autoAuthenticate() failed.")
-                    return@autoAuthenticate
-                }
-                ready()
+    private fun checkAuthentication(callback: (Boolean) -> Unit) {
+        if (currentUser != null) {
+            callback.invoke(true)
+            return
+        }
+        autoAuthenticate(this) { userId ->
+            if (userId == null) {
+                finishWithEnding("autoAuthenticate() failed.")
+                callback.invoke(false)
+                return@autoAuthenticate
             }
-        } else {
-            ready()
+            callback.invoke(true)
         }
     }
 
