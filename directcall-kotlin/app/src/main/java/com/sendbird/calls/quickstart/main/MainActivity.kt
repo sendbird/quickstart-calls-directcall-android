@@ -115,7 +115,11 @@ class MainActivity : AppCompatActivity() {
         }
         val intentFilter = IntentFilter()
         intentFilter.addAction(INTENT_ACTION_ADD_CALL_LOG)
-        registerReceiver(mReceiver, intentFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(mReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(mReceiver, intentFilter)
+        }
     }
 
     private fun unregisterReceiver() {
