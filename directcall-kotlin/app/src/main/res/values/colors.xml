@@ -5,4 +5,7 @@
     <color name="colorAccent">#1fcc94</color>
     <color name="appBackground">#ffffff</color>
     <color name="callBackground">#2c2c2c</color>
+    <color name="colorExcellent">#019C6E</color>
+    <color name="colorAverage">#FFC233</color>
+    <color name="colorPoor">#D9352C</color>
 </resources>

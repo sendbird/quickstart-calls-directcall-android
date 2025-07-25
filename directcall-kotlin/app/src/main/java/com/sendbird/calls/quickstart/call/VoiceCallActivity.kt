@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.sendbird.calls.*
 import com.sendbird.calls.SendBirdCall.dial
 import com.sendbird.calls.quickstart.TAG
@@ -48,6 +49,12 @@ class VoiceCallActivity : CallActivity() {
         get() = binding.imageViewBluetooth
     override val mImageViewEnd: ImageView
         get() = binding.imageViewEnd
+    override val mConstraintLayoutNetworkIndicator: ConstraintLayout
+        get() = binding.constraintLayoutNetworkIndicator
+    override val mImageViewNetworkIndicator: ImageView
+        get() = binding.imageViewNetworkIndicator
+    override val mTextViewNetworkIndicator: TextView
+        get() = binding.textViewNetworkIndicator
     // endregion
 
     override fun onCreate(savedInstanceState: Bundle?) {
