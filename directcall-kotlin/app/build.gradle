@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdk 33
+    compileSdk 35
     defaultConfig {
         applicationId "com.sendbird.calls.quickstart"
         minSdkVersion 21 // [Calls]
-        targetSdkVersion 33
+        targetSdkVersion 35
         versionCode 11
         versionName "1.7.1"
         multiDexEnabled true // multidex

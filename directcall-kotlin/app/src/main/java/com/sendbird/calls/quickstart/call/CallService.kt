@@ -3,6 +3,7 @@ package com.sendbird.calls.quickstart.call
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.graphics.BitmapFactory
 import android.os.Binder
 import android.os.Build
@@ -13,7 +14,6 @@ import com.sendbird.calls.DirectCall
 import com.sendbird.calls.SendBirdCall.ongoingCallCount
 import com.sendbird.calls.quickstart.R
 import com.sendbird.calls.quickstart.TAG
-import com.sendbird.calls.quickstart.main.FullscreenNotificationActivity
 import com.sendbird.calls.quickstart.main.FullscreenNotificationActivity.Companion.getFullScreenNotificationActivityIntent
 import com.sendbird.calls.quickstart.utils.getNicknameOrUserId
 import com.sendbird.calls.quickstart.utils.showToast
@@ -147,7 +147,15 @@ class CallService : Service() {
                     + ", calleeIdToDial: " + serviceData.calleeIdToDial + ", doDial: " + serviceData.doDial + ", doAccept: " + serviceData.doAccept + ", doLocalVideoStart: " + serviceData.doLocalVideoStart + ")"
         )
         mServiceData.set(serviceData)
-        startForeground(NOTIFICATION_ID, getNotification(mServiceData))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(
+                NOTIFICATION_ID,
+                getNotification(mServiceData),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, getNotification(mServiceData))
+        }
     }
 
     companion object {

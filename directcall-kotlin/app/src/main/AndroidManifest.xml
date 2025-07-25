@@ -9,6 +9,9 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+
     <application
         android:name=".BaseApplication"
         android:allowBackup="false"
@@ -77,6 +80,7 @@
 
         <service
             android:name=".call.CallService"
+            android:foregroundServiceType="phoneCall"
             android:exported="true"
             android:stopWithTask="false" /> <!-- [Calls] FCM -->
         <service
