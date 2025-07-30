@@ -2,30 +2,29 @@ package com.sendbird.calls.quickstart.utils
 
 import android.content.Context
 import android.util.Log
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.iid.InstanceIdResult
+import com.google.firebase.messaging.FirebaseMessaging
 import com.sendbird.calls.SendBirdCall.registerPushToken
 import com.sendbird.calls.SendBirdException
-import com.sendbird.calls.handler.CompletionHandler
+import com.sendbird.calls.internal.PushTokenType
 import com.sendbird.calls.quickstart.TAG
 
 fun Context.getPushToken(handler: GetPushTokenHandler?) {
     Log.i(TAG, "[PushUtils] getPushToken()")
     val savedToken = getPushToken()
     if (savedToken.isNullOrEmpty()) {
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(
-            OnCompleteListener<InstanceIdResult?> { task: Task<InstanceIdResult?> ->
-                val pushToken =  task.result?.token
-                if (!task.isSuccessful || pushToken == null) {
-                    Log.i(TAG, "[PushUtils] getPushToken() => getInstanceId failed", task.exception)
-                    handler?.onResult(null, SendBirdException(if (task.exception != null) task.exception?.message else ""))
-                    return@OnCompleteListener
-                }
-                Log.i(TAG,"[PushUtils] getPushToken() => pushToken: $pushToken")
-                handler?.onResult(pushToken, null)
-            })
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            val pushToken = task.result
+            if (!task.isSuccessful || pushToken == null) {
+                Log.i(TAG, "[PushUtils] getPushToken() => getInstanceId failed", task.exception)
+                handler?.onResult(
+                    null,
+                    SendBirdException(if (task.exception != null) task.exception?.message else "")
+                )
+                return@addOnCompleteListener
+            }
+            Log.i(TAG, "[PushUtils] getPushToken() => pushToken: $pushToken")
+            handler?.onResult(pushToken, null)
+        }
     } else {
         Log.i(TAG, "[PushUtils] savedToken: $savedToken")
         handler?.onResult(savedToken, null)
@@ -34,17 +33,21 @@ fun Context.getPushToken(handler: GetPushTokenHandler?) {
 
 fun Context.registerPushToken(pushToken: String, handler: PushTokenHandler?) {
     Log.i(TAG, "[PushUtils] registerPushToken(pushToken: $pushToken)")
-    registerPushToken(pushToken, false, CompletionHandler { e: SendBirdException? ->
+    registerPushToken(
+        pushToken,
+        PushTokenType.FCM_VOIP,
+        false
+    ) labelRegisterPushToken@{ e: SendBirdException? ->
         if (e != null) {
             Log.i(TAG, "[PushUtils] registerPushToken() => e: " + e.message)
             setPushToken(pushToken)
             handler?.onResult(e)
-            return@CompletionHandler
+            return@labelRegisterPushToken
         }
         Log.i(TAG, "[PushUtils] registerPushToken() => OK")
         setPushToken(pushToken)
         handler?.onResult(null)
-    })
+    }
 }
 
 fun interface GetPushTokenHandler {

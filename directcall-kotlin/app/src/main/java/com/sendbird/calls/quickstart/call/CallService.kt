@@ -152,6 +152,7 @@ class CallService : Service() {
                 NOTIFICATION_ID,
                 getNotification(mServiceData),
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL
+                        or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
             )
         } else {
             startForeground(NOTIFICATION_ID, getNotification(mServiceData))
