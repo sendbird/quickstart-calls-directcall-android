@@ -148,11 +148,19 @@ class CallService : Service() {
         )
         mServiceData.set(serviceData)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            // Add MICROPHONE FGS type only after the call is connected (app is in foreground).
+            // Including MICROPHONE while the app is still backgrounded (e.g. incoming ring from FCM)
+            // throws SecurityException on Android 15+ because RECORD_AUDIO is "while-in-use".
+            val foregroundServiceType = if (serviceData.callState == STATE.STATE_CONNECTED) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL or
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+            } else {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL
+            }
             startForeground(
                 NOTIFICATION_ID,
                 getNotification(mServiceData),
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL
-                        or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+                foregroundServiceType
             )
         } else {
             startForeground(NOTIFICATION_ID, getNotification(mServiceData))
