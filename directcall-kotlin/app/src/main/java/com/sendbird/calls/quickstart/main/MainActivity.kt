@@ -22,8 +22,7 @@ import com.sendbird.calls.quickstart.utils.*
 private const val REQUEST_PERMISSIONS_REQUEST_CODE = 1
 private val MANDATORY_PERMISSIONS = arrayOf(
     Manifest.permission.RECORD_AUDIO,  // for VoiceCall and VideoCall
-    Manifest.permission.CAMERA,  // for VideoCall
-    Manifest.permission.BLUETOOTH // for VoiceCall and VideoCall
+    Manifest.permission.CAMERA  // for VideoCall
 )
 
 class MainActivity : AppCompatActivity() {
@@ -133,13 +132,9 @@ class MainActivity : AppCompatActivity() {
         val permissions = ArrayList(listOf(*MANDATORY_PERMISSIONS))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
-            permissions.add(Manifest.permission.BLUETOOTH_SCAN)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissions.add(Manifest.permission.POST_NOTIFICATIONS)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            permissions.add(Manifest.permission.USE_FULL_SCREEN_INTENT)
         }
         val deniedPermissions = ArrayList<String>()
         for (permission in permissions) {
@@ -147,7 +142,7 @@ class MainActivity : AppCompatActivity() {
                 deniedPermissions.add(permission)
             }
         }
-        if (deniedPermissions.size > 0) {
+        if (deniedPermissions.isNotEmpty()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(deniedPermissions.toTypedArray(), REQUEST_PERMISSIONS_REQUEST_CODE)
             } else {
